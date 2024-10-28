@@ -56,12 +56,18 @@ Start the FastAPI server:
 ```bash
 uvicorn backend.main:app --reload
 ```
-The server will be available at http://127.0.0.1:8000.
+- The server will be available at http://127.0.0.1:8000.
 
-http://127.0.0.1:8000/docs - SwaggerUI
-http://127.0.0.1:8000/redoc - FastAPI Redoc
+- http://127.0.0.1:8000/docs - SwaggerUI
+- http://127.0.0.1:8000/redoc - FastAPI Redoc
 
 
+- SwaggerUI
 ![image](https://github.com/user-attachments/assets/2e63b741-90e7-44d8-978d-abaf0abff5cc)
+
+
+-FastAPI Redoc
+![image](https://github.com/user-attachments/assets/df43436e-1a16-4e18-9924-8db56edaf5c5)
+
 
 
