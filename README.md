@@ -34,3 +34,23 @@ Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
+Configure Environment Variables
+
+Create a .env file in the project root with the following content, replacing the placeholders with your PostgreSQL credentials:
+
+```bash
+DATABASE_URL=postgresql://username:password@localhost/dbname
+```
+Initialize the Database
+
+Create a PostgreSQL database as specified in the .env file and Run Alembic migrations to set up the database tables:
+
+```bash
+alembic upgrade head
+```
+
+Start the FastAPI server:
+
+```bash
+uvicorn backend.main:app --reload
+```
