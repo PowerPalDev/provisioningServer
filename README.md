@@ -41,6 +41,8 @@ Create a .env file in the project root with the following content, replacing the
 ```bash
 DATABASE_URL=postgresql://username:password@localhost/dbname
 ```
+The current DB configuration is available is alembic.ini file.
+
 Initialize the Database
 
 Create a PostgreSQL database as specified in the .env file and Run Alembic migrations to set up the database tables:
@@ -54,3 +56,12 @@ Start the FastAPI server:
 ```bash
 uvicorn backend.main:app --reload
 ```
+The server will be available at http://127.0.0.1:8000.
+
+http://127.0.0.1:8000/docs - SwaggerUI
+http://127.0.0.1:8000/redoc - FastAPI Redoc
+
+
+![image](https://github.com/user-attachments/assets/2e63b741-90e7-44d8-978d-abaf0abff5cc)
+
+
