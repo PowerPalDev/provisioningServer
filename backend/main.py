@@ -2,9 +2,8 @@ from fastapi import FastAPI, Depends, HTTPException
 from backend import models, schemas, database
 from sqlalchemy.orm import Session
 from backend.database import get_db
-
 from typing import List
-
+from datetime import datetime
 
 app = FastAPI()
 
@@ -19,7 +18,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.username == user.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
-    new_user = models.User(username=user.username, password=user.password)
+    new_user = models.User(username=user.username, password=user.password, created_at=datetime.utcnow())
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -36,7 +35,25 @@ def add_device(user_id: int, device: schemas.DeviceCreate, db: Session = Depends
     db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    new_device = models.Device(device_name=device.device_name, rating=device.rating, user_id=user_id)
+    new_device = models.Device(
+        name=device.name,
+        type=device.type,
+        serial_number=device.serial_number,
+        status=device.status,
+        firmware_version=device.firmware_version,
+        registration_date=device.registration_date,
+        last_seen=device.last_seen,
+        ip_address=device.ip_address,
+        mac_address=device.mac_address,
+        prov_key=device.prov_key,
+        config=device.config,
+        isonline=device.isonline,
+        encryption_key=device.encryption_key,
+        auth_token=device.auth_token,
+        notes=device.notes,
+        created_at=datetime.utcnow(),
+        user_id=user_id
+    )
     db.add(new_device)
     db.commit()
     db.refresh(new_device)
@@ -50,7 +67,7 @@ def get_devices(db: Session = Depends(get_db)):
 # Remove a device
 @app.delete("/devices/{device_id}")
 def remove_device(device_id: int, db: Session = Depends(get_db)):
-    device = db.query(models.Device).filter(models.Device.device_id == device_id).first()
+    device = db.query(models.Device).filter(models.Device.id == device_id).first()
     if device is None:
         raise HTTPException(status_code=404, detail="Device not found")
     db.delete(device)
