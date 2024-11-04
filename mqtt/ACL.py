@@ -7,6 +7,7 @@ import paho.mqtt.client as mqtt
 load_dotenv()
 
 # MQTT configuration from environment variables
+MQTT_ENABLED = os.getenv('MQTT_ENABLED')
 MQTT_ADDRESS = os.getenv('MQTT_ADDRESS')
 MQTT_PORT = int(os.getenv('MQTT_PORT', 1883))  # Default to 1883 if not specified
 MQTT_USER = os.getenv('MQTT_USER')
@@ -95,6 +96,9 @@ def assign_role_to_client(username: str, role_name: str, client: mqtt.Client) ->
         return False
 
 def register_and_enable_user(username: str, password: str):
+    if not MQTT_ENABLED:
+        return
+
     """
     Register and enable a user for MQTT access
     
