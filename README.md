@@ -23,7 +23,7 @@ git clone git@github.com:PowerPalDev/provisioningServer.git
 cd Provisioning_Server
 ```
 
-Setup the Virtual Environment
+Setup the Virtual Environment, in case of error check the guide in https://github.com/PowerPalDev/provisioningServer/wiki/Virtual-Enviroment-Setup
 
 ``` bash
 python -m venv .venv

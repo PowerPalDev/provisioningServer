@@ -13,6 +13,7 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     password = Column(String)
+    devicePassword = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     devices = relationship("Device", back_populates="owner")

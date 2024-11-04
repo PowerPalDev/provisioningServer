@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from backend.database import get_db
 from typing import List
 from datetime import datetime
+import hashlib
 
 app = FastAPI()
 
@@ -18,7 +19,17 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = db.query(models.User).filter(models.User.username == user.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
-    new_user = models.User(username=user.username, password=user.password, created_at=datetime.utcnow())
+    
+    current_time = datetime.utcnow()
+    new_user = models.User(username=user.username, password=user.password, created_at=current_time)
+    time_str = current_time.strftime("%Y%m%d%H%M%S")
+    new_user.devicePassword = hashlib.sha256(time_str.encode()).hexdigest()
+
+    from mqtt.ACL import register_and_enable_user
+
+    if not register_and_enable_user(user.username, user.password):
+        raise HTTPException(status_code=500, detail="Failed to register and enable MQTT user")
+
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
