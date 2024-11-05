@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, Security
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 from backend import models, schemas, database
 from sqlalchemy.orm import Session
@@ -18,7 +19,42 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 ALGORITHM = os.getenv('ALGORITHM')
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
 
-app = FastAPI()
+app = FastAPI(
+    title="Provisioning Server API",
+    description="API for device provisioning",
+    version="1.0.0",
+    openapi_tags=[
+        {
+            "name": "auth",
+            "description": "Authentication operations"
+        },
+        {
+            "name": "devices",
+            "description": "Device management operations"
+        }
+    ]
+)
+
+def custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    
+    openapi_schema = get_openapi(
+        title="Provisioning Server API",
+        version="1.0.0",  # Explicitly specify the OpenAPI version here
+        description="API for device provisioning",
+        routes=app.routes,
+    )
+    
+    if "components" not in openapi_schema:
+        openapi_schema["components"] = {}
+       
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
+
+app.openapi = custom_openapi
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000"],  # Replace with your React app's URL
