@@ -40,6 +40,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     user_id: int
+    devicePassword: str
     created_at: Optional[datetime] = None
     devices: List[Device] = []
 

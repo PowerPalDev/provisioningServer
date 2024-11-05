@@ -98,12 +98,14 @@ def create_user(user: schemas.UserCreate,
     
     current_time = datetime.utcnow()
     new_user = models.User(username=user.username, password=user.password, created_at=current_time)
-    time_str = current_time.strftime("%Y%m%d%H%M%S")
-    new_user.devicePassword = hashlib.sha256(time_str.encode()).hexdigest()
+
+    random_stuff = os.urandom(16).hex()  # Generate some random stuff
+    time_str = current_time.strftime("%Y%m%d%H%M%S%f") + random_stuff
+    new_user.devicePassword = hashlib.sha256(time_str.encode()).hexdigest()[:24]
 
     from mqtt.ACL import register_and_enable_user
 
-    if not register_and_enable_user(user.username, user.password):
+    if not register_and_enable_user(new_user.username, new_user.devicePassword):
         raise HTTPException(status_code=500, detail="Failed to register and enable MQTT user")
 
     db.add(new_user)
