@@ -29,7 +29,7 @@ class Device(DeviceBase):
     user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # User Schemas
 class UserBase(BaseModel):
@@ -40,6 +40,7 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     user_id: int
+    devicePassword: str
     created_at: Optional[datetime] = None
     devices: List[Device] = []
 
