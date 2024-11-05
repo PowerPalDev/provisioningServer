@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormLabel from '@mui/material/FormLabel';
@@ -11,7 +10,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { useSignUpForm } from '../hooks/useSignUp';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -57,14 +56,8 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-    const [emailError, setEmailError] = useState(false);
-    const [emailErrorMessage, setEmailErrorMessage] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
-    const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
-    const [nameError, setNameError] = useState(false);
-    const [nameErrorMessage, setNameErrorMessage] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
+    const { emailError, emailErrorMessage, nameError, nameErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp } = useSignUpForm();
+
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -72,60 +65,11 @@ export default function SignUp() {
         event.preventDefault();
     };
 
-    const validateInputs = () => {
-        const email = document.getElementById('email') as HTMLInputElement;
-        const password = document.getElementById('password') as HTMLInputElement;
-        const name = document.getElementById('name') as HTMLInputElement;
-
-        let isValid = true;
-
-        if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-            setEmailError(true);
-            setEmailErrorMessage('Please enter a valid email address.');
-            isValid = false;
-        } else {
-            setEmailError(false);
-            setEmailErrorMessage('');
-        }
-
-        if (!password.value || password.value.length < 6) {
-            setPasswordError(true);
-            // TODO: What we want our password to be?
-            setPasswordErrorMessage('Password must be at least 6 characters long.');
-            isValid = false;
-        } else {
-            setPasswordError(false);
-            setPasswordErrorMessage('');
-        }
-
-        if (!name.value || name.value.length < 1) {
-            setNameError(true);
-            setNameErrorMessage('Name is required.');
-            isValid = false;
-        } else {
-            setNameError(false);
-            setNameErrorMessage('');
-        }
-
-        if(isValid){
-            //TODO: Call HTTP request to create a new user.
-            navigate('/signin');
-        }
-        return false
-    };
-
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        if (nameError || emailError || passwordError) {
-            event.preventDefault();
-            return;
-        }
-        const data = new FormData(event.currentTarget);
-        console.log({
-            name: data.get('name'),
-            email: data.get('email'),
-            password: data.get('password'),
-        });
-    };
+    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        handleSignUp(data.get('name') as string, data.get('email') as string, data.get('password') as string);
+      };
 
     return (
         <SignUpContainer direction="column" justifyContent="space-between">
@@ -139,7 +83,7 @@ export default function SignUp() {
                 </Typography>
                 <Box
                     component="form"
-                    onSubmit={handleSubmit}
+                    onSubmit={handleFormSubmit}
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                 >
                     <FormControl>
@@ -205,7 +149,6 @@ export default function SignUp() {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        onClick={validateInputs}
                     >
                         Sign up
                     </Button>

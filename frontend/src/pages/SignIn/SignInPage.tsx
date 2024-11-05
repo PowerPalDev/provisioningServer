@@ -33,7 +33,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   
-  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSubmit } = useSignInForm();
+  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn } = useSignInForm();
   
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -52,7 +52,7 @@ export default function SignIn() {
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    handleSubmit(data.get('email') as string, data.get('password') as string);
+    handleSignIn(data.get('email') as string, data.get('password') as string);
   };
 
   return (

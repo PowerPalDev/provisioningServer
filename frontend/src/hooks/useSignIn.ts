@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { authenticateUser } from '../services/UserService';
+import { authenticateUser } from '../services/UserService';
 
 export const useSignInForm = () => {
   const [emailError, setEmailError] = useState(false);
@@ -35,20 +35,16 @@ export const useSignInForm = () => {
     return isValid;
   };
 
-  const handleSubmit = async (email: string, password: string) => {
+  const handleSignIn = async (email: string, password: string) => {
+
     if (!validateInputs(email, password)) return;
 
-    try {
-        //TODO: Handle authentication
-    //   const isAuthenticated = await authenticateUser(email, password);
-      if (true) {
-        navigate('/');
-      } else {
-        setEmailError(true);
-        setEmailErrorMessage('Invalid email or password');
-      }
-    } catch (error) {
-      console.error('Authentication failed', error);
+    if (await authenticateUser(email, password)) {
+      //TODO: manage errors from the server
+      navigate('/');
+    } else {
+      setEmailError(true);
+      setEmailErrorMessage('Invalid email or password');
     }
   };
 
@@ -59,7 +55,7 @@ export const useSignInForm = () => {
     passwordErrorMessage,
     showPassword,
     setShowPassword,
-    handleSubmit,
+    handleSignIn,
     validateInputs,
   };
 };
