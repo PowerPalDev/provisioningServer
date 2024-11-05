@@ -7,6 +7,14 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 
 
+class Admin(Base):
+    __tablename__ = 'admin'
+
+    admin_id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True)
+    password = Column(String)
+    active = Column(Boolean)
+
 class User(Base):
     __tablename__ = 'users'
 

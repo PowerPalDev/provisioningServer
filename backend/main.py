@@ -173,8 +173,8 @@ def remove_device(device_id: int,
 def login(username: str,
           password: str,
           db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.username == username).first()
-    if not user or user.password != password:  # In production, use proper password hashing
+    user = db.query(models.Admin).filter(models.Admin.username == username).first()
+    if not user or user.password != password or not user.active:  # In production, use proper password hashing
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
     token = create_access_token({"sub": username})
