@@ -27,6 +27,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Update token verification function
+async def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    except jwt.InvalidTokenError:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
 # Root endpoint
 @app.get("/")
 def read_root():
@@ -34,7 +52,10 @@ def read_root():
 
 # Register a new user
 @app.post("/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+def create_user(user: schemas.UserCreate,
+                 db: Session = Depends(get_db),
+                 token: dict = Depends(verify_token)
+                 ):
     db_user = db.query(models.User).filter(models.User.username == user.username).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Username already registered")
@@ -56,12 +77,16 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 # List all users
 @app.get("/users/", response_model=List[schemas.User])
-def get_users(db: Session = Depends(get_db)):
+def get_users(db: Session = Depends(get_db),
+              token: dict = Depends(verify_token)):
     return db.query(models.User).all()
 
 # Add a new device
 @app.post("/users/{user_id}/devices/", response_model=schemas.Device)
-def add_device(user_id: int, device: schemas.DeviceCreate, db: Session = Depends(get_db)):
+def add_device(user_id: int,
+               device: schemas.DeviceCreate,
+               db: Session = Depends(get_db),
+               token: dict = Depends(verify_token)):
     db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -91,12 +116,15 @@ def add_device(user_id: int, device: schemas.DeviceCreate, db: Session = Depends
 
 # List all devices
 @app.get("/devices/", response_model=List[schemas.Device])
-def get_devices(db: Session = Depends(get_db)):
+def get_devices(db: Session = Depends(get_db),
+                token: dict = Depends(verify_token)):
     return db.query(models.Device).all()
 
 # Remove a device
 @app.delete("/devices/{device_id}")
-def remove_device(device_id: int, db: Session = Depends(get_db)):
+def remove_device(device_id: int,
+                  db: Session = Depends(get_db),
+                  token: dict = Depends(verify_token)):
     device = db.query(models.Device).filter(models.Device.id == device_id).first()
     if device is None:
         raise HTTPException(status_code=404, detail="Device not found")
@@ -106,7 +134,9 @@ def remove_device(device_id: int, db: Session = Depends(get_db)):
 
 # Add login endpoint
 @app.post("/login")
-def login(username: str, password: str, db: Session = Depends(get_db)):
+def login(username: str,
+          password: str,
+          db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.username == username).first()
     if not user or user.password != password:  # In production, use proper password hashing
         raise HTTPException(status_code=401, detail="Invalid credentials")
@@ -122,20 +152,3 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-# Update token verification function
-async def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)):
-    try:
-        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code=401,
-            detail="Token has expired",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid token",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
