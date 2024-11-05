@@ -20,7 +20,6 @@ export const authenticateUser = async (username: string, password: string) => {
 
 export const createUser = async (user: User) => {
   try {
-    //TODO: validate user
     const response = await api.post(environment.user.signup, user);
     return response.data
   } catch (error) {

@@ -50,7 +50,7 @@ export default function SignIn() {
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     const data = new FormData(e.currentTarget);
     handleSubmit(data.get('email') as string, data.get('password') as string);
   };
@@ -117,7 +117,6 @@ export default function SignIn() {
               }}
             />
           </FormControl>
-          {/* Align checkbox and link on the same line */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}

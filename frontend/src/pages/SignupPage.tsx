@@ -11,6 +11,7 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -63,6 +64,7 @@ export default function SignUp() {
     const [nameError, setNameError] = useState(false);
     const [nameErrorMessage, setNameErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -104,8 +106,12 @@ export default function SignUp() {
             setNameError(false);
             setNameErrorMessage('');
         }
-        //TODO: navigate to signin if isValid === true
-        return isValid;
+
+        if(isValid){
+            //TODO: Call HTTP request to create a new user.
+            navigate('/signin');
+        }
+        return false
     };
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -116,7 +122,6 @@ export default function SignUp() {
         const data = new FormData(event.currentTarget);
         console.log({
             name: data.get('name'),
-            lastName: data.get('lastName'),
             email: data.get('email'),
             password: data.get('password'),
         });
