@@ -6,27 +6,21 @@ const api = axios.create({
   baseURL: url,
 });
 
-export const authenticateUser = async (username: string, password: string): Promise<boolean> => {
-  try {
-    const response = await api.post(environment.user.auth, { username, password });
-    const { token } = response.data;
+export const authenticateUser = async (username: string, password: string) => {
+  const response = await api.post(environment.user.auth, { username, password });
+  const { token } = response.data;
 
-    if (token) {
-      localStorage.setItem('authToken', token); // Save the token for later use
-      return true; // Indicate success
-    } else {
-      return false; // Indicate failure if no token is returned
-    }
-  } catch (error) {
-    console.error('Authentication failed:', error);
-    return false; // Return false on error
+  if (token) {
+    localStorage.setItem('authToken', token);
   }
+  return response;
+
 };
 
 export const createUser = async (user: User) => {
   try {
     const response = await api.post(environment.user.signup, user);
-    return response.data
+    return response
   } catch (error) {
     console.error('Registration failed: ', error);
     throw new Error('Registration failed, please try again');

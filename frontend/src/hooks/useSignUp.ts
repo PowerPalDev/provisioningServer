@@ -54,10 +54,13 @@ export const useSignUpForm = () => {
             email: email,
             password: password
         };
-
-        //TODO: do the necessary checks
-        if(await !createUser(user)) return;
+        const response = await createUser(user);
+        if (response.status < 500 && response.status > 399)
+            //TODO: popup error
+            return;
+        else if (response.status < 300 && response.status > 199) {
             navigate('/signin');
+        }
     };
     return {
         emailError,

@@ -38,13 +38,12 @@ export const useSignInForm = () => {
   const handleSignIn = async (email: string, password: string) => {
 
     if (!validateInputs(email, password)) return;
-
-    if (await authenticateUser(email, password)) {
-      //TODO: manage errors from the server
-      navigate('/');
-    } else {
+    const response = await authenticateUser(email, password)
+    if (response.status < 500 && response.status > 399) {
       setEmailError(true);
       setEmailErrorMessage('Invalid email or password');
+    } else {
+      navigate('/');
     }
   };
 
