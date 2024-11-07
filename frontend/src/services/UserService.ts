@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { environment, url } from '../enviroment';
-import { User } from '../models/User';
 
 const api = axios.create({
   baseURL: url,
@@ -17,9 +16,9 @@ export const authenticateUser = async (username: string, password: string) => {
 
 };
 
-export const createUser = async (user: User) => {
+export const createUser = async (username: string, password: string) => {
   try {
-    const response = await api.post(environment.user.signup, user);
+    const response = await api.post(environment.user.signup, { username, password });
     return response
   } catch (error) {
     console.error('Registration failed: ', error);

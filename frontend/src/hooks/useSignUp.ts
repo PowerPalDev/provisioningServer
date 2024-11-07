@@ -1,19 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createUser } from '../services/UserService';
-import { User } from '../models/User'
 
 export const useSignUpForm = () => {
     const [emailError, setEmailError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
-    const [nameError, setNameError] = useState(false);
-    const [nameErrorMessage, setNameErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-    const validateInputs = (name: string, email: string, password: string) => {
+    const validateInputs = (email: string, password: string) => {
 
         let isValid = true;
 
@@ -36,25 +33,12 @@ export const useSignUpForm = () => {
             setPasswordErrorMessage('');
         }
 
-        if (!name || name.length < 1) {
-            setNameError(true);
-            setNameErrorMessage('Name is required.');
-            isValid = false;
-        } else {
-            setNameError(false);
-            setNameErrorMessage('');
-        }
-
         return isValid
     };
-    const handleSignUp = async (name: string, email: string, password: string) => {
-        if (!validateInputs(name, email, password)) return;
-        const user: User = {
-            name: name,
-            email: email,
-            password: password
-        };
-        const response = await createUser(user);
+    const handleSignUp = async (email: string, password: string) => {
+        if (!validateInputs(email, password)) return;
+ 
+        const response = await createUser(email, password);
         if (response.status < 500 && response.status > 399)
             //TODO: popup error
             return;
@@ -65,8 +49,6 @@ export const useSignUpForm = () => {
     return {
         emailError,
         emailErrorMessage,
-        nameError,
-        nameErrorMessage,
         passwordError,
         passwordErrorMessage,
         showPassword,

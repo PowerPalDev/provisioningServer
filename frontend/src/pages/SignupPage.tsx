@@ -56,7 +56,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-    const { emailError, emailErrorMessage, nameError, nameErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp } = useSignUpForm();
+    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp } = useSignUpForm();
 
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -68,7 +68,7 @@ export default function SignUp() {
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
-        handleSignUp(data.get('name') as string, data.get('email') as string, data.get('password') as string);
+        handleSignUp(data.get('email') as string, data.get('password') as string);
       };
 
     return (
@@ -86,20 +86,6 @@ export default function SignUp() {
                     onSubmit={handleFormSubmit}
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                 >
-                    <FormControl>
-                        <FormLabel htmlFor="name">Full name</FormLabel>
-                        <TextField
-                            autoComplete="name"
-                            name="name"
-                            required
-                            fullWidth
-                            id="name"
-                            placeholder="Jon Snow"
-                            error={nameError}
-                            helperText={nameErrorMessage}
-                            color={nameError ? 'error' : 'primary'}
-                        />
-                    </FormControl>
                     <FormControl>
                         <FormLabel htmlFor="email">Email</FormLabel>
                         <TextField
