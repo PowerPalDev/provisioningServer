@@ -8,6 +8,8 @@ export const useSignUpForm = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [loginFailed, setLoginFailed] = useState(false);
+
     const navigate = useNavigate();
 
     const validateInputs = (email: string, password: string) => {
@@ -37,14 +39,21 @@ export const useSignUpForm = () => {
     };
     const handleSignUp = async (email: string, password: string) => {
         if (!validateInputs(email, password)) return;
- 
-        const response = await createUser(email, password);
-        if (response.status < 500 && response.status > 399)
-            //TODO: popup error
-            return;
-        else if (response.status < 300 && response.status > 199) {
-            navigate('/signin');
+
+        try {
+            const response = await createUser(email, password);
+            if (response.status < 500 && response.status > 399) {
+                setLoginFailed(true);
+                return;
+            }
+            else if (response.status < 300 && response.status > 199) {
+                navigate('/signin');
+            }
+        } catch (e) {
+            setLoginFailed(true);
+            console.log(e);
         }
+
     };
     return {
         emailError,
@@ -55,5 +64,7 @@ export const useSignUpForm = () => {
         setShowPassword,
         handleSignUp,
         validateInputs,
+        loginFailed,
+        setLoginFailed
     };
 };

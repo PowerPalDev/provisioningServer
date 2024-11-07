@@ -5,6 +5,7 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPasswordPage';
 import { useSignInForm } from '../../hooks/useSignIn';
 import MuiCard from '@mui/material/Card';
+import RequestFailedPopUp from '../errors/LoginFailed';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -33,7 +34,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   
-  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn } = useSignInForm();
+  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn, loginFailed, setLoginFailed } = useSignInForm();
   
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -53,6 +54,10 @@ export default function SignIn() {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     handleSignIn(data.get('email') as string, data.get('password') as string);
+  };
+
+  const handleCloseLoginFailed = () => {
+    setLoginFailed(false);
   };
 
   return (
@@ -150,6 +155,7 @@ export default function SignIn() {
         </Box>
       </Card>
       <ForgotPassword open={open} onClose={handleCloseForgotPassword} />
-    </SignInContainer>
+      <RequestFailedPopUp open={loginFailed} onClose={handleCloseLoginFailed} errorText='Login Failed! Try again with another e-mail or password.'/>   
+      </SignInContainer>
   );
 }

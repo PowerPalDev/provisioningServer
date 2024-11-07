@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import { IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useSignUpForm } from '../hooks/useSignUp';
+import RequestFailedPopUp from './errors/LoginFailed';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -56,7 +57,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp } = useSignUpForm();
+    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp, loginFailed, setLoginFailed } = useSignUpForm();
 
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -69,7 +70,11 @@ export default function SignUp() {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         handleSignUp(data.get('email') as string, data.get('password') as string);
-      };
+    };
+
+    const handleCloseLoginFailed = () => {
+        setLoginFailed(false);
+    };
 
     return (
         <SignUpContainer direction="column" justifyContent="space-between">
@@ -148,6 +153,7 @@ export default function SignUp() {
                     </Typography>
                 </Box>
             </Card>
+            <RequestFailedPopUp open={loginFailed} onClose={handleCloseLoginFailed} errorText='Looks like something wrong with your request.' />
         </SignUpContainer>
     );
 }
