@@ -1,15 +1,34 @@
-# PowerPal UI
-## Overview
+# Project Name
 
-This project is a React application bootstrapped with Vite and TypeScript, using Material-UI for design components and custom hooks for state management.
+A brief description of your project.
 
-## Project Structure
+## Table of Contents
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Scripts](#scripts)
+---
 
-```plaintext
-src
- ├── assets        # Icons, images, and static assets
- ├── guards        # AuthGuard and route protection logic
- ├── models        # TypeScript interfaces for models
- ├── pages         # React components for pages (e.g., SignIn, HomePage)
- ├── services      # Service functions for API and other utilities
- └── hooks         # Custom React hooks
+## Installation
+
+1. Clone the repository with ssh:
+
+   ```bash
+   git clone git@github.com:PowerPalDev/provisioningServer.git
+   cd provisioningServer
+    ```
+2. Install dependencies:
+    ```bash
+    npm install
+    ```
+## Getting started
+To start the development server run:
+```bash
+    npm run dev
+```
+Then open the [UI](http://localhost:5173/)
+
+## Scripts
+- `npm run dev`: Starts the development server.
+- `npm run build`: Builds the app for production.
+- `npm run lint`: Runs ESLint to check for code quality issues.
+- `npm run preview`: Serves the production build locally.
