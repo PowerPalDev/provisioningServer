@@ -57,7 +57,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp, loginFailed, setLoginFailed } = useSignUpForm();
+    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp, signupFailed, setSignupFailed, errorMessage } = useSignUpForm();
 
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -72,8 +72,8 @@ export default function SignUp() {
         handleSignUp(data.get('email') as string, data.get('password') as string);
     };
 
-    const handleCloseLoginFailed = () => {
-        setLoginFailed(false);
+    const handleCloseSignupFailed = () => {
+        setSignupFailed(false);
     };
 
     return (
@@ -153,7 +153,7 @@ export default function SignUp() {
                     </Typography>
                 </Box>
             </Card>
-            <RequestFailedPopUp open={loginFailed} onClose={handleCloseLoginFailed} errorText='Looks like something wrong with your request.' />
+            <RequestFailedPopUp open={signupFailed} onClose={handleCloseSignupFailed} errorText={errorMessage} />
         </SignUpContainer>
     );
 }

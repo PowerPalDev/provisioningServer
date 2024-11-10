@@ -6,7 +6,7 @@ const api = axios.create({
 });
 
 export const authenticateUser = async (username: string, password: string) => {
-  const response = await api.post(environment.user.auth, { username, password });
+  const response = await api.post(environment.user.login, { username, password });
   const { token } = response.data;
 
   if (token) {

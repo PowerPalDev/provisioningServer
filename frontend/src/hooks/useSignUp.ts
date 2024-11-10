@@ -8,7 +8,8 @@ export const useSignUpForm = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [loginFailed, setLoginFailed] = useState(false);
+    const [signupFailed, setSignupFailed] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('')
 
     const navigate = useNavigate();
 
@@ -43,14 +44,16 @@ export const useSignUpForm = () => {
         try {
             const response = await createUser(email, password);
             if (response.status < 500 && response.status > 399) {
-                setLoginFailed(true);
+                setSignupFailed(true);
+                setErrorMessage('Something wrong with your request');
                 return;
             }
             else if (response.status < 300 && response.status > 199) {
                 navigate('/signin');
             }
         } catch (e) {
-            setLoginFailed(true);
+            setSignupFailed(true);
+            setErrorMessage('Something wrong with your request');
             console.log(e);
         }
 
@@ -64,7 +67,8 @@ export const useSignUpForm = () => {
         setShowPassword,
         handleSignUp,
         validateInputs,
-        loginFailed,
-        setLoginFailed
+        signupFailed,
+        setSignupFailed,
+        errorMessage
     };
 };

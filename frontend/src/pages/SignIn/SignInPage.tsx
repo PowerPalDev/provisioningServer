@@ -34,7 +34,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   
-  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn, loginFailed, setLoginFailed } = useSignInForm();
+  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn, loginFailed, setLoginFailed, errorMessage } = useSignInForm();
   
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -155,7 +155,7 @@ export default function SignIn() {
         </Box>
       </Card>
       <ForgotPassword open={open} onClose={handleCloseForgotPassword} />
-      <RequestFailedPopUp open={loginFailed} onClose={handleCloseLoginFailed} errorText='Login Failed! Try again with another e-mail or password.'/>   
+      <RequestFailedPopUp open={loginFailed} onClose={handleCloseLoginFailed} errorText={errorMessage}/>   
       </SignInContainer>
   );
 }
