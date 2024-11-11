@@ -41,8 +41,6 @@ Create a .env file in the project root with the following content, replacing the
 ```bash
 DATABASE_URL=postgresql://username:password@localhost/dbname
 ```
-The current DB configuration is available is alembic.ini file.
-
 Initialize the Database
 
 Create a PostgreSQL database as specified in the .env file, and import the schema.sql dump from the DB folder.
