@@ -6,19 +6,19 @@ const api = axios.create({
 });
 
 export const authenticateUser = async (username: string, password: string) => {
-  const response = await api.post(environment.user.login, { username, password });
+  const response = await api.post(`${environment.user.login}?username=${username}&password=${password}
+  `);
   const { token } = response.data;
 
   if (token) {
-    localStorage.setItem('authToken', token);
+    localStorage.setItem("authToken", token);
   }
   return response;
-
 };
 
 export const createUser = async (username: string, password: string) => {
   try {
-    const response = await api.post(environment.user.signup, { username, password });
+    const response = await api.post(environment.user.signup, { username, password,  });
     return response
   } catch (error) {
     console.error('Registration failed: ', error);

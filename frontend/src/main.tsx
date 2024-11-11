@@ -34,7 +34,7 @@ const GlobalStylesComponent = () => (
         height: '100%',
       },
       body: {
-        margin: 0,        
+        margin: 0,
         padding: '1em',
         width: '100%',
         height: '100%',
@@ -68,14 +68,16 @@ const router = createBrowserRouter([{
 }, {
   path: '/signup',
   element:
-    <Title title='Sign Up'>
-      <SignupPage />
-    </Title>
+    <AuthGuard isAuthenticated={isAuthenticated}>
+      <Title title='Sign Up'>
+        <SignupPage />
+      </Title>
+    </AuthGuard>
 }]);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <GlobalStylesComponent/>
+    <GlobalStylesComponent />
     <RouterProvider router={router} />
   </StrictMode>
 );
