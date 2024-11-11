@@ -1,7 +1,5 @@
 -- Adminer 4.8.4-dev PostgreSQL 17.0 dump
 
-\connect "digitalspine";
-
 CREATE SEQUENCE admin_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."admin" (
@@ -14,6 +12,12 @@ CREATE TABLE "public"."admin" (
 COMMENT ON TABLE "public"."admin" IS 'this table is used to manage the user able to login to the panel / use the api';
 
 COMMENT ON COLUMN "public"."admin"."password" IS 'for the moment a sha1 hash, later we might use something better';
+
+
+CREATE TABLE "public"."alembic_version" (
+    "version_num" character varying(32) NOT NULL,
+    CONSTRAINT "alembic_version_pkc" PRIMARY KEY ("version_num")
+) WITH (oids = false);
 
 
 CREATE TABLE "public"."devices" (
@@ -52,4 +56,4 @@ CREATE TABLE "public"."users" (
 ) WITH (oids = false);
 
 
--- 2024-11-05 14:00:48.934273+00
+-- 2024-11-11 11:15:05.235426+00
