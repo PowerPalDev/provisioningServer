@@ -11,6 +11,8 @@ import hashlib
 import jwt
 from fastapi.middleware.cors import CORSMiddleware
 import os
+from backend.deviceOperation.provisioning import router as device_router
+
 
 load_dotenv()
 security = HTTPBearer()
@@ -23,6 +25,7 @@ app = FastAPI(
     title="Provisioning Server API",
     description="API for device provisioning",
     version="1.0.0",
+    debug=True,
     openapi_tags=[
         {
             "name": "auth",
@@ -34,6 +37,7 @@ app = FastAPI(
         }
     ]
 )
+app.include_router(device_router)
 
 def custom_openapi():
     if app.openapi_schema:

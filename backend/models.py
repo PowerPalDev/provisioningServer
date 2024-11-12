@@ -30,7 +30,7 @@ class User(Base):
 class Device(Base):
     __tablename__ = 'devices'
 
-    id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True,nullable=False)
     name = Column(String)
     type = Column(String)
     user_id = Column(Integer, ForeignKey('users.user_id'))
