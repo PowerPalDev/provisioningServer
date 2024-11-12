@@ -142,16 +142,6 @@ export default function SignIn() {
           >
             Sign in
           </Button>
-          <Typography sx={{ textAlign: 'center' }}>
-            Don&apos;t have an account?{' '}
-            <Link
-              href="/signup"
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
-              Sign up
-            </Link>
-          </Typography>
         </Box>
       </Card>
       <ForgotPassword open={open} onClose={handleCloseForgotPassword} />

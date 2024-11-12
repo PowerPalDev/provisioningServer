@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { createUser } from '../services/UserService';
 
 export const useSignUpForm = () => {
@@ -10,8 +9,6 @@ export const useSignUpForm = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [signupFailed, setSignupFailed] = useState(false);
     const [errorMessage, setErrorMessage] = useState('')
-
-    const navigate = useNavigate();
 
     const validateInputs = (email: string, password: string) => {
 
@@ -38,7 +35,8 @@ export const useSignUpForm = () => {
 
         return isValid
     };
-    const handleSignUp = async (email: string, password: string) => {
+
+    const handleSignUp = async (email: string, password: string, handleClose: () => void) => {
         console.log("Test")
         if (!validateInputs(email, password)){ 
             console.error(`Input given aren't valid`);
@@ -51,16 +49,14 @@ export const useSignUpForm = () => {
                 setErrorMessage('Something wrong with your request');
                 return;
             }
-            else if (response.status < 300 && response.status > 199) {
-                navigate('/signin');
-            }
+            handleClose()
         } catch (e) {
             setSignupFailed(true);
             setErrorMessage('Something wrong with your request');
             console.log(e);
         }
-
     };
+
     return {
         emailError,
         emailErrorMessage,
