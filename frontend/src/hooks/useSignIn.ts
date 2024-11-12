@@ -45,6 +45,7 @@ export const useSignInForm = () => {
       if (response.status < 500 && response.status > 399) {
         setLoginFailed(true);
         setErrorMessage(`Failed request`);
+        console.log("Failed Request")
       } else {
         navigate('/');
         setLoginFailed(false)

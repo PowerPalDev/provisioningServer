@@ -1,15 +1,13 @@
 // src/Main.tsx
-import { StrictMode, useEffect } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './pages/HomePage.tsx';
-import SignupPage from './pages/SignupPage.tsx';
 import AuthGuard from './guards/AuthGuard.tsx';
-import PageNotFound from './pages/errors/PageNotFound.tsx';
+import PageNotFound from './components/Dialogs/errors/PageNotFound.tsx';
 import SignInCard from './pages/SignIn/SignInPage.tsx';
 import { GlobalStyles } from '@mui/material';
-
-let isAuthenticated = true //TODO: Implement authentication logic
+import { isAuthenticated } from './utils/authHelper.ts';
 
 interface TitleProps {
   title: string;
@@ -47,10 +45,20 @@ const GlobalStylesComponent = () => (
   />
 );
 
+const Main = () => {
+const [authStatus, setAuthStatus] = useState<boolean | null>(null);
+
+useEffect(() => {
+  setAuthStatus(isAuthenticated());
+}, []);
+
+if (authStatus === null) {
+  return <div>Loading...</div>;
+}
 const router = createBrowserRouter([{
   path: '/',
   element: (
-    <AuthGuard isAuthenticated={isAuthenticated}>
+    <AuthGuard isAuthenticated={isAuthenticated()}>
       <Title title="Home Page">
         <HomePage />
       </Title>
@@ -65,19 +73,13 @@ const router = createBrowserRouter([{
     <Title title='Sign In'>
       <SignInCard />
     </Title>
-}, {
-  path: '/signup',
-  element:
-    <AuthGuard isAuthenticated={isAuthenticated}>
-      <Title title='Sign Up'>
-        <SignupPage />
-      </Title>
-    </AuthGuard>
 }]);
+return <RouterProvider router={router}/>;
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <GlobalStylesComponent />
-    <RouterProvider router={router} />
+    <Main />
   </StrictMode>
 );

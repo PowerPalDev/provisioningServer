@@ -5,7 +5,7 @@ import { styled } from '@mui/material/styles';
 import ForgotPassword from './ForgotPasswordPage';
 import { useSignInForm } from '../../hooks/useSignIn';
 import MuiCard from '@mui/material/Card';
-import RequestFailedPopUp from '../errors/LoginFailed';
+import RequestFailedPopUp from '../../components/Dialogs/errors/LoginFailed';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',

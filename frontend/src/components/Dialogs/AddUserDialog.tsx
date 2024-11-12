@@ -1,17 +1,12 @@
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormLabel from '@mui/material/FormLabel';
 import FormControl from '@mui/material/FormControl';
-import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
-import Typography from '@mui/material/Typography';
-import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import { IconButton, InputAdornment } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useSignUpForm } from '../hooks/useSignUp';
-import RequestFailedPopUp from './errors/LoginFailed';
+import { useSignUpForm } from '../../hooks/useSignUp';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -33,31 +28,13 @@ const Card = styled(MuiCard)(({ theme }) => ({
     }),
 }));
 
-const SignUpContainer = styled(Stack)(({ theme }) => ({
-    height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-    minHeight: '100%',
-    padding: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
-        padding: theme.spacing(4),
-    },
-    '&::before': {
-        content: '""',
-        display: 'block',
-        position: 'absolute',
-        zIndex: -1,
-        inset: 0,
-        backgroundImage:
-            'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
-        backgroundRepeat: 'no-repeat',
-        ...theme.applyStyles('dark', {
-            backgroundImage:
-                'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-        }),
-    },
-}));
+interface AddUserDialogProps {
+    open: boolean;
+    handleClose: () => void;
+}
 
-export default function SignUp() {
-    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp, signupFailed, setSignupFailed, errorMessage } = useSignUpForm();
+export const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, handleClose }) => {
+    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp } = useSignUpForm();
 
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -69,29 +46,16 @@ export default function SignUp() {
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
+        console.log("Test");
         handleSignUp(data.get('email') as string, data.get('password') as string);
     };
 
-    const handleCloseSignupFailed = () => {
-        setSignupFailed(false);
-    };
-
     return (
-        <SignUpContainer direction="column" justifyContent="space-between">
-            <Card variant="outlined">
-                <Typography
-                    component="h1"
-                    variant="h4"
-                    sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-                >
-                    Sign up
-                </Typography>
-                <Box
-                    component="form"
-                    onSubmit={handleFormSubmit}
-                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
-                >
-                    <FormControl>
+        <Dialog open={open} onClose={handleClose}>
+            <Card variant='outlined'>
+                <DialogTitle>Add New User</DialogTitle>
+                <DialogContent>
+                    <FormControl component="form" onSubmit={handleFormSubmit}>
                         <FormLabel htmlFor="email">Email</FormLabel>
                         <TextField
                             required
@@ -105,8 +69,7 @@ export default function SignUp() {
                             helperText={emailErrorMessage}
                             color={emailError ? 'error' : 'primary'}
                         />
-                    </FormControl>
-                    <FormControl>
+
                         <FormLabel htmlFor="password">Password</FormLabel>
                         <TextField
                             required
@@ -135,25 +98,13 @@ export default function SignUp() {
                                 ),
                             }}
                         />
+                        <DialogActions>
+                            <Button onClick={handleClose} color="error">Cancel</Button>
+                            <Button type='submit' variant="contained" color="primary">Add</Button>
+                        </DialogActions>
                     </FormControl>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                    >
-                        Sign up
-                    </Button>
-                    <Typography sx={{ textAlign: 'center' }}>
-                        Already have an account?{' '}
-                        <span>
-                            <Link href="/signin" variant="body2" sx={{ alignSelf: 'center' }}>
-                                Sign in
-                            </Link>
-                        </span>
-                    </Typography>
-                </Box>
+                </DialogContent>
             </Card>
-            <RequestFailedPopUp open={signupFailed} onClose={handleCloseSignupFailed} errorText={errorMessage} />
-        </SignUpContainer>
+        </Dialog>
     );
 }

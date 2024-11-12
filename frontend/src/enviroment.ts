@@ -5,7 +5,7 @@ export const url = host_url + port;
 export const environment = {
     production: false,
     user: {
-        signup: '/users/',
+        signup: '/users',
         login: '/login'
     },
 };

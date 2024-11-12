@@ -39,7 +39,10 @@ export const useSignUpForm = () => {
         return isValid
     };
     const handleSignUp = async (email: string, password: string) => {
-        if (!validateInputs(email, password)) return;
+        console.log("Test")
+        if (!validateInputs(email, password)){ 
+            console.error(`Input given aren't valid`);
+            return;}
 
         try {
             const response = await createUser(email, password);
