@@ -6,6 +6,12 @@ export const environment = {
     production: false,
     user: {
         signup: '/users',
-        login: '/login'
+        login: '/login',
+        addDevice: (userId: number): string => `/users/${userId}/devices/`
     },
+    device: {
+        base: '/devices/',
+        list: (): string => `${environment.device.base}`,
+        remove: (deviceId: number): string => `${environment.device.base}${deviceId}`
+    }
 };

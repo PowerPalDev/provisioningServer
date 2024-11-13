@@ -6,13 +6,18 @@ const api = axios.create({
 });
 
 export const authenticateUser = async (username: string, password: string) => {
-  const response = await api.post(
-    `${environment.user.login}?username=${username}&password=${password}`
-  );
-  const authToken = response.data.access_token;
-  localStorage.setItem("authToken", authToken);
+  try {
+    const response = await api.post(
+      `${environment.user.login}?username=${username}&password=${password}`
+    );
+    const authToken = response.data.access_token;
+    localStorage.setItem("authToken", authToken);
 
-  return response;
+    return response;
+  } catch (e) {
+    console.error(`Authentication failed: ${e}`);
+    throw new Error('Authentication failed, please try again');
+  }
 };
 
 
@@ -20,9 +25,9 @@ export const createUser = async (username: string, password: string) => {
   try {
     const response = await api.post(
       environment.user.signup,
-      { 
-        username: username, 
-        password: password 
+      {
+        username: username,
+        password: password
       },
       {
         headers: {
@@ -34,5 +39,21 @@ export const createUser = async (username: string, password: string) => {
   } catch (error) {
     console.error('Registration failed: ', error);
     throw new Error('Registration failed, please try again');
+  }
+}
+
+export const addUserDevice = async (userId: number) => {
+  try {
+    const response = await api.post(`${environment.user.addDevice(userId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      })
+    return response
+
+  } catch (e) {
+    console.error(`Something went wrong while trying to create a new device for user: ${e}`);
+    throw new Error(`Something went wrong while trying to create a new device for user: ${userId}`);
   }
 }

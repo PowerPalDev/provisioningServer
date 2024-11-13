@@ -46,35 +46,35 @@ const GlobalStylesComponent = () => (
 );
 
 const Main = () => {
-const [authStatus, setAuthStatus] = useState<boolean | null>(null);
+  const [authStatus, setAuthStatus] = useState<boolean | null>(null);
 
-useEffect(() => {
-  setAuthStatus(isAuthenticated());
-}, []);
+  useEffect(() => {
+    setAuthStatus(isAuthenticated());
+  }, []);
 
-if (authStatus === null) {
-  return <div>Loading...</div>;
-}
-const router = createBrowserRouter([{
-  path: '/',
-  element: (
-    <AuthGuard isAuthenticated={isAuthenticated()}>
-      <Title title="Home Page">
-        <HomePage />
+  if (authStatus === null) {
+    return <div>Loading...</div>;
+  }
+  const router = createBrowserRouter([{
+    path: '/',
+    element: (
+      <AuthGuard isAuthenticated={isAuthenticated()}>
+        <Title title="Home Page">
+          <HomePage />
+        </Title>
+      </AuthGuard>
+    ),
+    errorElement:
+      <PageNotFound />
+  },
+  {
+    path: '/signin',
+    element:
+      <Title title='Sign In'>
+        <SignInCard />
       </Title>
-    </AuthGuard>
-  ),
-  errorElement:
-    <PageNotFound />
-},
-{
-  path: '/signin',
-  element:
-    <Title title='Sign In'>
-      <SignInCard />
-    </Title>
-}]);
-return <RouterProvider router={router}/>;
+  }]);
+  return <RouterProvider router={router} />;
 }
 
 createRoot(document.getElementById('root')!).render(
