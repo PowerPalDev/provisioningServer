@@ -1,5 +1,7 @@
 -- Adminer 4.8.4-dev PostgreSQL 17.0 dump
 
+\connect "digitalspine";
+
 CREATE SEQUENCE admin_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
 
 CREATE TABLE "public"."admin" (
@@ -20,9 +22,11 @@ CREATE TABLE "public"."alembic_version" (
 ) WITH (oids = false);
 
 
+CREATE SEQUENCE devices_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
+
 CREATE TABLE "public"."devices" (
     "user_id" integer,
-    "id" integer NOT NULL,
+    "id" integer DEFAULT nextval('devices_id_seq') NOT NULL,
     "name" character varying,
     "type" character varying,
     "serial_number" character varying,
@@ -56,4 +60,4 @@ CREATE TABLE "public"."users" (
 ) WITH (oids = false);
 
 
--- 2024-11-11 11:15:05.235426+00
+-- 2024-11-14 10:45:19.979921+00
