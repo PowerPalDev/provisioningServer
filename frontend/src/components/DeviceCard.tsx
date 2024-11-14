@@ -1,18 +1,13 @@
-import React, { useState } from 'react';
 import { Typography, IconButton, Box } from '@mui/material';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 interface DeviceProps {
-    name: string;
-    owner: string;
+    owner: number;
+    deviceId: number,
+    onDelete: (deviceId: number) => void
 }
 
-const Device: React.FC<DeviceProps> = ({ name, owner }) => {
-    const [isOn, setIsOn] = useState(false);
-
-    const handleToggle = () => {
-        setIsOn(prevState => !prevState);
-    };
+const DeviceCard: React.FC<DeviceProps> = ({ owner, deviceId}) => {
 
     return (
         <Box
@@ -33,21 +28,16 @@ const Device: React.FC<DeviceProps> = ({ name, owner }) => {
             }}
         >
             <Box>
-                <Typography variant="h6">{name}</Typography>
+                <Typography variant="h6">Device id: {deviceId}</Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                    Owner: {owner}
+                    Owner id: {owner}
                 </Typography>
             </Box>
-            <IconButton onClick={handleToggle} color="inherit">
-                <PowerSettingsNewIcon
-                    style={{
-                        color: isOn ? 'blue' : 'gray',
-                        fontSize: 32,
-                    }}
-                />
+            <IconButton onClick={() => {}} color="error">
+            <DeleteIcon />
             </IconButton>
         </Box>
     );
 };
 
-export default Device;
+export default DeviceCard;

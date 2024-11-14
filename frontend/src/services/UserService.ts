@@ -1,9 +1,7 @@
-import axios from 'axios';
-import { environment, url } from '../enviroment';
 
-const api = axios.create({
-  baseURL: url,
-});
+import api from "./api/axiosInstance";
+import { environment } from "../enviroment";
+
 
 export const authenticateUser = async (username: string, password: string) => {
   try {
@@ -12,48 +10,31 @@ export const authenticateUser = async (username: string, password: string) => {
     );
     const authToken = response.data.access_token;
     localStorage.setItem("authToken", authToken);
-
     return response;
-  } catch (e) {
-    console.error(`Authentication failed: ${e}`);
-    throw new Error('Authentication failed, please try again');
+  } catch (error) {
+    console.error(`Authentication failed: ${error}`);
   }
 };
-
 
 export const createUser = async (username: string, password: string) => {
   try {
     const response = await api.post(
       environment.user.signup,
-      {
-        username: username,
-        password: password
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
-      }
-    );
-    return response
+      { username, password },
+     );
+    return response;
   } catch (error) {
-    console.error('Registration failed: ', error);
-    throw new Error('Registration failed, please try again');
+    console.error('Registration failed:', error);
   }
-}
+};
 
 export const addUserDevice = async (userId: number) => {
   try {
-    const response = await api.post(`${environment.user.addDevice(userId)}`,
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('authToken')}`,
-        },
-      })
-    return response
-
-  } catch (e) {
-    console.error(`Something went wrong while trying to create a new device for user: ${e}`);
-    throw new Error(`Something went wrong while trying to create a new device for user: ${userId}`);
+    const response = await api.post(
+      environment.user.addDevice(userId),
+    );
+    return response;
+  } catch (error) {
+    console.error(`Failed to create a new device for user ${userId}:`, error);
   }
-}
+};

@@ -12,7 +12,6 @@ export const handleLogout = () => {
 
 export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('authToken');
-  console.log(`Found this token: ${token}`);
   
   if (!token) {
     console.log("No token found, redirecting to sign-in.");

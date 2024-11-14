@@ -44,7 +44,8 @@ export const useSignUpForm = () => {
 
         try {
             const response = await createUser(email, password);
-            if (response.status < 500 && response.status > 399) {
+            
+            if (response && response.status < 500 && response.status > 399) {
                 setSignupFailed(true);
                 setErrorMessage('Something wrong with your request');
                 return;

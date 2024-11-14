@@ -10,7 +10,7 @@ export const environment = {
         addDevice: (userId: number): string => `/users/${userId}/devices/`
     },
     device: {
-        base: '/devices/',
+        base: '/devices',
         list: (): string => `${environment.device.base}`,
         remove: (deviceId: number): string => `${environment.device.base}${deviceId}`
     }

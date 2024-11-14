@@ -7,7 +7,6 @@ import { styled } from '@mui/material/styles';
 import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useSignUpForm } from '../../hooks/useSignUp';
-// import RequestFailedPopUp from './errors/LoginFailed';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -105,8 +104,6 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, handleClose 
                     </FormControl>
                 </DialogContent>
             </Card>
-            {/* TODO: Add failed request popUp */}
-            {/* <RequestFailedPopUp open={loginFailed} onClose={handleCloseLoginFailed} errorText={errorMessage}/>    */}
         </Dialog>
     );
 }

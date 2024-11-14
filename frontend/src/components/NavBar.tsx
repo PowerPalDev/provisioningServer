@@ -17,7 +17,7 @@ const Navbar = () => {
 
     return (
         <ThemeProvider theme={theme}>
-            <AppBar position="static" color="primary">
+            <AppBar position="static" color="primary" sx={{marginBottom: '1em'}}>
                 <Toolbar>
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Device Management
@@ -32,7 +32,7 @@ const Navbar = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <AddDeviceDialog open={openDeviceDialog} handleClose={handleCloseDeviceDialog} />
+            <AddDeviceDialog open={openDeviceDialog} handleClose={handleCloseDeviceDialog}/>
             <AddUserDialog open={openUserDialog} handleClose={handleCloseUserDialog} />
         </ThemeProvider>
     );

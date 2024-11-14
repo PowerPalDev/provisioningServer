@@ -8,8 +8,6 @@ export const useSignInForm = () => {
   const [passwordError, setPasswordError] = useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [loginFailed, setLoginFailed] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
   const navigate = useNavigate();
 
@@ -41,20 +39,10 @@ export const useSignInForm = () => {
 
     if (!validateInputs(email, password)) return;
     try {
-      const response = await authenticateUser(email, password)
-      if (response.status < 500 && response.status > 399) {
-        setLoginFailed(true);
-        setErrorMessage(`Failed request`);
-        console.log("Failed Request")
-      } else {
-        navigate('/');
-        setLoginFailed(false)
-      }
+      await authenticateUser(email, password)
+      navigate('/');
     } catch (e) {
       console.log(e);
-      setLoginFailed(true);
-      setErrorMessage(`Failed request`);
-
     }
   };
 
@@ -67,8 +55,5 @@ export const useSignInForm = () => {
     setShowPassword,
     handleSignIn,
     validateInputs,
-    loginFailed,
-    setLoginFailed,
-    errorMessage
   };
 };
