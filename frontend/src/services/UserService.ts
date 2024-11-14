@@ -10,6 +10,10 @@ export const authenticateUser = async (username: string, password: string) => {
     );
     const authToken = response.data.access_token;
     localStorage.setItem("authToken", authToken);
+
+    if(authToken){
+      
+    }
     return response;
   } catch (error) {
     console.error(`Authentication failed: ${error}`);
