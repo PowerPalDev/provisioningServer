@@ -13,6 +13,25 @@ MQTT_PORT = int(os.getenv('MQTT_PORT', 1883))  # Default to 1883 if not specifie
 MQTT_USER = os.getenv('MQTT_USER')
 MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
 
+def deleteMqttClient(username: str, client: mqtt.Client) -> bool:
+    """
+    Delete an MQTT client user using Dynamic Security
+    """
+    command = {
+        "commands": [{
+            "command": "deleteClient",
+            "username": username
+        }]
+    }
+
+    try:
+        # Publish the delete client command
+        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
+        return result.rc == 0
+    except Exception as e:
+        print(f"Error deleting MQTT user: {str(e)}")
+        return False
+
 def create_mqtt_client(username: str, password: str, client: mqtt.Client) -> bool:
     """
     Create a new MQTT client user using Dynamic Security
@@ -111,6 +130,8 @@ def register_and_enable_device(mac_address: str,username: str, password: str):
         role_name = f"{username}_Publish"
         topic = f"user/{username}/#"
 
+        #MQTT acl do not send back the response! For the moment is just easier to remove old use and create a new one
+        deleteMqttClient(mac_address, client)
         create_mqtt_client(mac_address, password, client)
         assign_role_to_client(mac_address, role_name, client)
 
@@ -144,7 +165,10 @@ def register_and_enable_user(username: str, password: str):
         topic = f"user/{username}/#"
         
         create_role(role_name, topic, client)
+
+        deleteMqttClient(username, client)
         create_mqtt_client(username, password, client)
+        
         assign_role_to_client(username, role_name, client)
         
         client.disconnect()
