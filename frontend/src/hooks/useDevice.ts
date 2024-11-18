@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { getDevices } from '../services/DeviceService';
-import { Device } from '../models/Device';
+import { Device, DeviceClass } from '../models/Device';
 import { addUserDevice } from '../services/UserService';
 
 export const useDevice = () => {
@@ -24,10 +24,10 @@ export const useDevice = () => {
         setError('');
     };
 
-    const createDevice = async (deviceId: number, userId: number, handleClose: () => void) => {
+    const createDevice = async (newDevice: DeviceClass, userId: number, handleClose: () => void) => {
         try{
-            await addUserDevice(userId);
-            console.log(`Device created with id: ${deviceId}`);
+            await addUserDevice(userId, newDevice);
+            console.log(`Device: ${newDevice}, created`);
         }catch(e){
             console.error(e);
         }

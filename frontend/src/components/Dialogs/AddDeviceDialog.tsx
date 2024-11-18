@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel, TextField } from '@mui/material';
 import { useDevice } from '../../hooks/useDevice';
+import { DeviceClass } from '../../models/Device';
 
 interface AddDeviceDialogProps {
     open: boolean;
@@ -12,13 +13,13 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         const data = new FormData(e.currentTarget);
-        const deviceId = parseInt(data.get('deviceId') as string, 10);
+        const newDevice = new DeviceClass(data.get('deviceAddress') as string, data.get('deviceName') as string, data.get('deviceId') as string)
         const ownerId = parseInt(data.get('ownerId') as string, 10);
 
-        console.log(`Device form submitted for device with id: ${deviceId}`)
+        console.log(`Device form submitted for device with id: ${newDevice.serial_number}`)
         e.preventDefault();
 
-        createDevice(deviceId, ownerId, handleClose);
+        createDevice(newDevice, ownerId, handleClose);
     };
 
     return (
@@ -32,6 +33,24 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
                         margin="dense"
                         id="deviceId"
                         name='deviceId'
+                        fullWidth
+                        variant="outlined"
+                    />                    
+                    <FormLabel htmlFor="deviceName">Device Name</FormLabel>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="deviceName"
+                        name='deviceName'
+                        fullWidth
+                        variant="outlined"
+                    />
+                    <FormLabel htmlFor="deviceMac">Device Mac Address</FormLabel>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="deviceMac"
+                        name='deviceMac'
                         fullWidth
                         variant="outlined"
                     />
