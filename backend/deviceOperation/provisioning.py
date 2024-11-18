@@ -31,6 +31,8 @@ def generateDevicePassword():
 
 def createDevice(deviceMac, customerName, deviceName,  db):
     
+    current_time = datetime.utcnow()
+    
     user = db.query(models.User).filter(models.User.username == customerName).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
