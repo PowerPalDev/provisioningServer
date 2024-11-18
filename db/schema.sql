@@ -16,18 +16,13 @@ COMMENT ON TABLE "public"."admin" IS 'this table is used to manage the user able
 COMMENT ON COLUMN "public"."admin"."password" IS 'for the moment a sha1 hash, later we might use something better';
 
 
-CREATE TABLE "public"."alembic_version" (
-    "version_num" character varying(32) NOT NULL,
-    CONSTRAINT "alembic_version_pkc" PRIMARY KEY ("version_num")
-) WITH (oids = false);
-
-
 CREATE SEQUENCE devices_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
 
 CREATE TABLE "public"."devices" (
     "user_id" integer,
     "id" integer DEFAULT nextval('devices_id_seq') NOT NULL,
     "name" character varying,
+    "devicePassword" character varying,
     "type" character varying,
     "serial_number" character varying,
     "status" integer,
@@ -43,7 +38,7 @@ CREATE TABLE "public"."devices" (
     "auth_token" character varying,
     "notes" character varying,
     "created_at" timestamp,
-    CONSTRAINT "devices_prov_key_key" UNIQUE ("prov_key")
+    CONSTRAINT "devices_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
 
@@ -53,11 +48,10 @@ CREATE TABLE "public"."users" (
     "user_id" integer DEFAULT nextval('users_user_id_seq') NOT NULL,
     "username" character varying,
     "password" character varying,
-    "devicePassword" character varying,
     "created_at" timestamp,
     CONSTRAINT "users_pkey" PRIMARY KEY ("user_id"),
     CONSTRAINT "users_username_key" UNIQUE ("username")
 ) WITH (oids = false);
 
 
--- 2024-11-14 10:45:19.979921+00
+-- 2024-11-18 13:23:33.568973+00
