@@ -165,7 +165,10 @@ def register_and_enable_user(username: str, password: str):
         topic = f"user/{username}/#"
         
         create_role(role_name, topic, client)
+
+        deleteMqttClient(username, client)
         create_mqtt_client(username, password, client)
+        
         assign_role_to_client(username, role_name, client)
         
         client.disconnect()
