@@ -95,6 +95,31 @@ def assign_role_to_client(username: str, role_name: str, client: mqtt.Client) ->
         print(f"Error assigning role: {str(e)}")
         return False
 
+def register_and_enable_device(mac_address: str,username: str, password: str):
+    if not MQTT_ENABLED:
+        return
+    
+    # Initialize MQTT client
+    client = mqtt.Client()
+    # Set credentials for broker connection
+    client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
+
+    try:
+        # Connect to broker
+        client.connect(MQTT_ADDRESS, MQTT_PORT)
+
+        role_name = f"{username}_Publish"
+        topic = f"user/{username}/#"
+
+        create_mqtt_client(mac_address, password, client)
+        assign_role_to_client(mac_address, role_name, client)
+
+        client.disconnect()
+        return True
+    except Exception as e:
+        print(f"Error registering device: {str(e)}")
+        return False
+
 def register_and_enable_user(username: str, password: str):
     if not MQTT_ENABLED:
         return
@@ -115,7 +140,7 @@ def register_and_enable_user(username: str, password: str):
         # Connect to broker
         client.connect(MQTT_ADDRESS, MQTT_PORT)
 
-        role_name = f"{username}Publish"
+        role_name = f"{username}_Publish"
         topic = f"user/{username}/#"
         
         create_role(role_name, topic, client)
