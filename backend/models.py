@@ -21,7 +21,6 @@ class User(Base):
     user_id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     password = Column(String)
-    devicePassword = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     devices = relationship("Device", back_populates="owner")
@@ -32,6 +31,7 @@ class Device(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True,nullable=False)
     name = Column(String)
+    devicePassword = Column(String)
     type = Column(String)
     user_id = Column(Integer, ForeignKey('users.user_id'))
     serial_number = Column(String)

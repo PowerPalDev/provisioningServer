@@ -103,10 +103,6 @@ def create_user(user: schemas.UserCreate,
     current_time = datetime.utcnow()
     new_user = models.User(username=user.username, password=user.password, created_at=current_time)
 
-    random_stuff = os.urandom(16).hex()  # Generate some random stuff
-    time_str = current_time.strftime("%Y%m%d%H%M%S%f") + random_stuff
-    new_user.devicePassword = hashlib.sha256(time_str.encode()).hexdigest()[:24]
-
     from mqtt.ACL import register_and_enable_user
 
     if not register_and_enable_user(new_user.username, new_user.devicePassword):
@@ -130,30 +126,15 @@ def add_device(user_id: int,
                db: Session = Depends(get_db),
                token: dict = Depends(verify_token)):
     db_user = db.query(models.User).filter(models.User.user_id == user_id).first()
+
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    new_device = models.Device(
-        name=device.name,
-        type=device.type,
-        serial_number=device.serial_number,
-        status=device.status,
-        firmware_version=device.firmware_version,
-        registration_date=device.registration_date,
-        last_seen=device.last_seen,
-        ip_address=device.ip_address,
-        mac_address=device.mac_address,
-        prov_key=device.prov_key,
-        config=device.config,
-        isonline=device.isonline,
-        encryption_key=device.encryption_key,
-        auth_token=device.auth_token,
-        notes=device.notes,
-        created_at=datetime.utcnow(),
-        user_id=user_id
-    )
-    db.add(new_device)
-    db.commit()
-    db.refresh(new_device)
+    
+    from deviceOperation.provisioning import createDevice
+    new_device = createDevice(device.mac_address, db_user.username, device.name, db)
+    if new_device is None:
+        raise HTTPException(status_code=500, detail="Failed to create device")
+    
     return new_device
 
 # List all devices
