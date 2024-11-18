@@ -8,6 +8,7 @@ export interface Device {
     last_seen: string;
     ip_address: string;
     mac_address: string;
+    devicePassword: string;
     prov_key: number;
     config: object;
     isonline: boolean;
@@ -23,17 +24,18 @@ export class DeviceClass implements Device {
     serial_number: string;
     status: number = 0;
     firmware_version: string = "default";
-    registration_date: string = new Date().toISOString().split('T')[0];
-    last_seen: string = new Date().toISOString();
+    registration_date: string = "";
+    last_seen: string = "";
     ip_address: string = "default";
     mac_address: string;
+    devicePassword: string = "default";
     prov_key: number = 0;
     config: object = {};
     isonline: boolean = true;
     encryption_key: string = "default";
     auth_token: string = "default";
     notes: string = "";
-    created_at: string = new Date().toISOString();
+    created_at: string = "";
 
     constructor(mac_address: string, name: string, serial_number: string) {
         this.mac_address = mac_address;
