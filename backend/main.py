@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, Security
+from fastapi import FastAPI, Depends, HTTPException, Security, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
@@ -12,6 +12,7 @@ import jwt
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from backend.deviceOperation.provisioning import router as device_router
+
 
 
 load_dotenv()
@@ -175,3 +176,13 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
+@app.middleware("http")
+async def log_exceptions_middleware(request: Request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        # Log the exception with the endpoint path
+        print("Unhandled exception occurred at endpoint %s: %s", request.url.path, e, exc_info=True)
+        # Re-raise the exception so FastAPI can handle it appropriately
+        raise e

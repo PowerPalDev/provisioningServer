@@ -57,10 +57,45 @@ def createDevice(deviceMac, customerName, deviceName,  db):
 
     return new_device
 
-# Example device route
-@router.post("/provisioning")
-async def provisioning(data: dict, db: Session = Depends(get_db)):
+@router.get("/provisioning")
+
+async def provisioning(
+    deviceMac: str | None = None, 
+    deviceMacHex: str | None = None, 
+    db: Session = Depends(get_db)
+):
     try:
+        if deviceMacHex:
+            # Convert hex MAC to colon-separated format
+            deviceMac = ':'.join(deviceMacHex[i:i+2].lower() for i in range(0, len(deviceMacHex), 2))
+
+        device = db.query(models.Device).filter(models.Device.mac_address == deviceMac).first()
+
+        if not device:
+            raise HTTPException(status_code=404, detail="Device not found")
+
+        # Load the user and get the devicePassword
+        user = db.query(models.User).filter(models.User.user_id == device.user_id).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+        
+        return {"devicePassword": device.devicePassword, "username": user.username}
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
+@router.post("/autoProvisioning")
+async def autoProvisioning(data: dict, db: Session = Depends(get_db)):
+    try:
+        load_dotenv()
+        device_auto_add = os.getenv("DEVICE_AUTO_ADD", "false").lower() == "true"
+
+        if not device_auto_add:
+            raise HTTPException(status_code=403, detail="Device auto provisioning is not enabled")
+
         deviceMac = data.get("deviceMac")
         customerName = data.get("customerName")
         deviceName = data.get("deviceName")
@@ -75,23 +110,11 @@ async def provisioning(data: dict, db: Session = Depends(get_db)):
 
         if not device:
             # Check if DEVICE_AUTO_ADD is enabled in the environment
-            load_dotenv()
-            device_auto_add = os.getenv("DEVICE_AUTO_ADD", "false").lower() == "true"
+            device = createDevice(deviceMac, customerName, deviceName, db)
 
-            if device_auto_add:
-                device = createDevice(deviceMac, customerName, deviceName, db)
-            else:
-                raise HTTPException(status_code=403, detail="Device unknown, impossible to provision")
-
-        # Load the user and get the devicePassword
-        user = db.query(models.User).filter(models.User.username == customerName).first()
-        if not user:
-            raise HTTPException(status_code=404, detail="User not found")
-        
         return {"devicePassword": device.devicePassword}
 
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail=str(e))
-
-
+    
