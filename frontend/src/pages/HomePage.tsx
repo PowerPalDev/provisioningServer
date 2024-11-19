@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Box, Container, Typography, ThemeProvider } from '@mui/material';
 import { theme } from '../theme';
 import { styled } from '@mui/material/styles';
@@ -18,10 +19,17 @@ const Card = styled(MuiCard)(({ theme }) => ({
 }));
 
 const HomePage = () => {
-  const { devices, loading, fetchDevices } = useDevice();
+  const { devices, loading, fetchDevices, deleteDevice } = useDevice();
+
+  useEffect(() => {
+    fetchDevices();
+  }, []);
+  
+  const onDelete = (deviceId: number) => {
+    deleteDevice(deviceId);
+  };
 
   if (loading) {
-    fetchDevices();
     return <Typography>Loading...</Typography>;
   }
 
@@ -37,9 +45,9 @@ const HomePage = () => {
             {devices.map((device) => (
               <DeviceCard
                 key={device.id}
-                owner={device.owner}
+                ownerId={device.id}
                 deviceId={device.id}
-                onDelete={() => {}}
+                handleDelete={onDelete}
               />
             ))}
           </Box>

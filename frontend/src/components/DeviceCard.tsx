@@ -2,12 +2,12 @@ import { Typography, IconButton, Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 interface DeviceProps {
-    owner: number;
+    ownerId: number;
     deviceId: number,
-    onDelete: (deviceId: number) => void
+    handleDelete: (deviceId: number) => void
 }
 
-const DeviceCard: React.FC<DeviceProps> = ({ owner, deviceId}) => {
+const DeviceCard: React.FC<DeviceProps> = ({ ownerId, deviceId, handleDelete}) => {
 
     return (
         <Box
@@ -30,10 +30,10 @@ const DeviceCard: React.FC<DeviceProps> = ({ owner, deviceId}) => {
             <Box>
                 <Typography variant="h6">Device id: {deviceId}</Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                    Owner id: {owner}
+                    Owner id: {ownerId}
                 </Typography>
             </Box>
-            <IconButton onClick={() => {}} color="error">
+            <IconButton onClick={() => handleDelete(deviceId)} color="error">
             <DeleteIcon />
             </IconButton>
         </Box>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getDevices } from '../services/DeviceService';
+import { getDevices, removeDevice } from '../services/DeviceService';
 import { Device, DeviceClass } from '../models/Device';
 import { addUserDevice } from '../services/UserService';
 
@@ -25,14 +25,32 @@ export const useDevice = () => {
     };
 
     const createDevice = async (newDevice: DeviceClass, userId: number, handleClose: () => void) => {
-        try{
-            await addUserDevice(userId, newDevice);
-            console.log(`Device: ${newDevice}, created`);
-        }catch(e){
+        try {
+            const response = await addUserDevice(userId, newDevice);
+
+            if (response && response.data) {
+                fetchDevices();
+            } else {
+                console.error("Failed to retrieve created device from response");
+            }
+        } catch (e) {
             console.error(e);
+        } finally {
+            handleClose();
         }
-        handleClose();
-    }
-    return { devices, loading, error, handleClosePopUp, fetchDevices, createDevice };
+    };
+
+
+    const deleteDevice = async (deviceId: number) => {
+        try {
+            await removeDevice(deviceId);
+            setDevices((prevDevices) => prevDevices.filter((device) => device.id !== deviceId));
+            console.log(`Device with ID ${deviceId} removed successfully.`);
+        } catch (e) {
+            console.error(`Failed to delete device with ID ${deviceId}:`, e);
+        }
+    };
+
+    return { devices, loading, error, handleClosePopUp, fetchDevices, createDevice, deleteDevice };
 
 };

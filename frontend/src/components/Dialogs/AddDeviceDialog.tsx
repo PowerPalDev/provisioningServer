@@ -9,17 +9,18 @@ interface AddDeviceDialogProps {
 }
 
 export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleClose }) => {
-    const { createDevice } = useDevice();
+    const { createDevice, fetchDevices } = useDevice();
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         const data = new FormData(e.currentTarget);
-        const newDevice = new DeviceClass(data.get('deviceAddress') as string, data.get('deviceName') as string, data.get('deviceId') as string)
         const ownerId = parseInt(data.get('ownerId') as string, 10);
+        const newDevice = new DeviceClass(parseInt(data.get('deviceId') as string, 10), data.get('deviceAddress') as string, data.get('deviceName') as string,  ownerId)
 
         console.log(`Device form submitted for device with id: ${newDevice.serial_number}`)
         e.preventDefault();
 
         createDevice(newDevice, ownerId, handleClose);
+        fetchDevices()
     };
 
     return (
@@ -35,7 +36,7 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
                         name='deviceId'
                         fullWidth
                         variant="outlined"
-                    />                    
+                    />
                     <FormLabel htmlFor="deviceName">Device Name</FormLabel>
                     <TextField
                         autoFocus

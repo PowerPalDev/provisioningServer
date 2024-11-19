@@ -12,6 +12,6 @@ export const environment = {
     device: {
         base: '/devices',
         list: (): string => `${environment.device.base}`,
-        remove: (deviceId: number): string => `${environment.device.base}${deviceId}`
+        remove: (deviceId: number): string => `${environment.device.base}/${deviceId}`
     }
 };
