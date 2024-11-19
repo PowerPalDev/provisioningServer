@@ -35,11 +35,10 @@ const GlobalStylesComponent = () => (
 );
 
 const Main = () => {
-  const [authStatus, setAuthStatus] = useState<boolean | null>(null);
   const [errorText, setErrorText] = useState('');
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
 
-  // Funzione per chiudere il popup
+
   const handleCloseErrorPopup = () => {
     setIsErrorPopupOpen(false);
     setErrorText('');
@@ -48,18 +47,14 @@ const Main = () => {
   useEffect(() => {
     initializeErrorHandling(() => setIsErrorPopupOpen(true), setErrorText);
 
-    setAuthStatus(isAuthenticated());
   }, []);
 
-  if (authStatus === null) {
-    return <div>Loading...</div>;
-  }
 
   const router = createBrowserRouter([
     {
       path: '/',
       element: (
-        <AuthGuard isAuthenticated={isAuthenticated()}>
+        <AuthGuard isAuthenticated={isAuthenticated}>
           <Title title="Home Page">
             <HomePage />
           </Title>

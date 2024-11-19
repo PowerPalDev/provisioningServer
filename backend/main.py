@@ -62,7 +62,7 @@ app.openapi = custom_openapi
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace with your React app's URL
+    allow_origins=["http://localhost:5173"],  # Replace with your React app's URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -106,7 +106,7 @@ def create_user(user: schemas.UserCreate,
 
     from mqtt.ACL import register_and_enable_user
 
-    if not register_and_enable_user(new_user.username, new_user.devicePassword):
+    if not register_and_enable_user(new_user.username, new_user.password):
         raise HTTPException(status_code=500, detail="Failed to register and enable MQTT user")
 
     db.add(new_user)
@@ -131,7 +131,7 @@ def add_device(user_id: int,
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     
-    from deviceOperation.provisioning import createDevice
+    from .deviceOperation.provisioning import createDevice
     new_device = createDevice(device.mac_address, db_user.username, device.name, db)
     if new_device is None:
         raise HTTPException(status_code=500, detail="Failed to create device")
