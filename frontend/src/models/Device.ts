@@ -8,8 +8,8 @@ export interface Device {
     serial_number: string;
     status: number;
     firmware_version: string;
-    registration_date: string; // YYYY-MM-DD
-    last_seen: string; // HH:mm:ss
+    registration_date: string;
+    last_seen: string;
     ip_address: string;
     mac_address: string;
     prov_key: number;
@@ -18,10 +18,9 @@ export interface Device {
     encryption_key: string;
     auth_token: string;
     notes: string;
-    created_at: string; // ISO 8601
+    created_at: string;
 }
 
-// TypeScript Class
 export class DeviceClass implements Device {
     id: number;
     name: string;

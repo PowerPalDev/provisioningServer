@@ -12,7 +12,7 @@ export const handleLogout = () => {
 
 export const isAuthenticated = (): boolean => {
   const token = localStorage.getItem('authToken');
-  
+
   if (!token) {
     console.log("No token found, redirecting to sign-in.");
     return false;

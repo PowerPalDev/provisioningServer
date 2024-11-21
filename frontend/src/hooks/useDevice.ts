@@ -9,8 +9,11 @@ export const useDevice = () => {
     const [error, setError] = useState<string>('');
 
     const fetchDevices = async () => {
+        setLoading(true);
         try {
+            console.log("Fetching devices...");
             const response = await getDevices();
+            console.log("Devices fetched:", response.data);
             setDevices(response.data as Device[]);
         } catch (e) {
             console.error(e);
@@ -18,6 +21,7 @@ export const useDevice = () => {
             setLoading(false);
         }
     };
+    
 
     const handleClosePopUp = () => {
         console.log('PopUp closed');
@@ -29,7 +33,7 @@ export const useDevice = () => {
             const response = await addUserDevice(userId, newDevice);
 
             if (response && response.data) {
-                fetchDevices();
+                await fetchDevices();
             } else {
                 console.error("Failed to retrieve created device from response");
             }
@@ -43,13 +47,17 @@ export const useDevice = () => {
 
     const deleteDevice = async (deviceId: number) => {
         try {
-            await removeDevice(deviceId);
             setDevices((prevDevices) => prevDevices.filter((device) => device.id !== deviceId));
+            console.log(`Attempting to delete device with ID ${deviceId}...`);
+    
+            await removeDevice(deviceId);
             console.log(`Device with ID ${deviceId} removed successfully.`);
         } catch (e) {
             console.error(`Failed to delete device with ID ${deviceId}:`, e);
+            await fetchDevices();
         }
     };
+    
 
     return { devices, loading, error, handleClosePopUp, fetchDevices, createDevice, deleteDevice };
 

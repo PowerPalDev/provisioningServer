@@ -24,6 +24,10 @@ const HomePage = () => {
   useEffect(() => {
     fetchDevices();
   }, []);
+
+  useEffect(() => {
+    console.log("Devices updated in HomePage:", devices);
+  }, [devices]);
   
   const onDelete = (deviceId: number) => {
     deleteDevice(deviceId);
@@ -45,7 +49,7 @@ const HomePage = () => {
             {devices.map((device) => (
               <DeviceCard
                 key={device.id}
-                ownerId={device.id}
+                ownerId={device.user_id}
                 deviceId={device.id}
                 handleDelete={onDelete}
               />
