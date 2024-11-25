@@ -1,16 +1,13 @@
 import { useState } from 'react';
 import { AppBar, IconButton, Toolbar, Typography, ThemeProvider } from '@mui/material';
 import { theme } from '../theme';
-import AddIcon from '@mui/icons-material/Add';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
-import { AddDeviceDialog } from './Dialogs/AddDeviceDialog';
 import { AddUserDialog } from './Dialogs/AddUserDialog';
 import { Logout } from '@mui/icons-material';
 import { handleLogout } from '../utils/authHelper';
 import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
-    const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
     const [openUserDialog, setOpenUserDialog] = useState(false);
 
     const navigate = useNavigate();
@@ -25,7 +22,6 @@ const Navbar = () => {
     };
 
     const handleOpenUserDialog = () => setOpenUserDialog(true);
-    const handleOpenDeviceDialog = () => setOpenDeviceDialog(true);
 
     return (
         <ThemeProvider theme={theme}>
@@ -34,10 +30,7 @@ const Navbar = () => {
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         Device Management
                     </Typography>
-                    <IconButton color="inherit" onClick={handleOpenDeviceDialog}>
-                        <AddIcon />
-                        <Typography variant="body2" sx={{ ml: 1 }}>Add Device</Typography>
-                    </IconButton>
+
                     <IconButton color="inherit" onClick={handleOpenUserDialog}>
                         <PersonAddIcon />
                         <Typography variant="body2" sx={{ ml: 1 }}>Add User</Typography>
@@ -48,7 +41,6 @@ const Navbar = () => {
                     </IconButton>
                 </Toolbar>
             </AppBar>
-            <AddDeviceDialog open={openDeviceDialog} handleClose={() => setOpenDeviceDialog(false)} />
             <AddUserDialog open={openUserDialog} handleClose={() => setOpenUserDialog(false)} />
         </ThemeProvider>
     );
