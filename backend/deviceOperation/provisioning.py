@@ -67,8 +67,9 @@ async def provisioning(
     try:
         if deviceMacHex:
             # Convert hex MAC to colon-separated format
-            deviceMac = ':'.join(deviceMacHex[i:i+2].lower() for i in range(0, len(deviceMacHex), 2))
+            deviceMac = ':'.join(deviceMacHex[i:i+2].upper() for i in range(0, len(deviceMacHex), 2))
 
+        #check if the device is already present in the database
         device = db.query(models.Device).filter(models.Device.mac_address == deviceMac).first()
 
         if not device:

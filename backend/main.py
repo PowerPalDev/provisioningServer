@@ -12,7 +12,7 @@ import jwt
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from backend.deviceOperation.provisioning import router as device_router
-
+from utility.logging import logger, Category
 
 
 load_dotenv()
@@ -132,6 +132,7 @@ def add_device(user_id: int,
         raise HTTPException(status_code=404, detail="User not found")
     
     from .deviceOperation.provisioning import createDevice
+    device.mac_address = device.mac_address.upper()
     new_device = createDevice(device.mac_address, db_user.username, device.name, db)
     if new_device is None:
         raise HTTPException(status_code=500, detail="Failed to create device")
@@ -179,6 +180,7 @@ def create_access_token(data: dict):
 @app.middleware("http")
 async def log_exceptions_middleware(request: Request, call_next):
     try:
+        logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
         response = await call_next(request)
         return response
     except Exception as e:
