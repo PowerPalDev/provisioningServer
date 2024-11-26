@@ -2,6 +2,7 @@ import json
 import os
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -27,6 +28,7 @@ def deleteMqttClient(username: str, client: mqtt.Client) -> bool:
     try:
         # Publish the delete client command
         result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
+        print(f"Delete client result: {result.rc} for command: {command}")
         return result.rc == 0
     except Exception as e:
         print(f"Error deleting MQTT user: {str(e)}")
@@ -53,6 +55,7 @@ def create_mqtt_client(username: str, password: str, client: mqtt.Client) -> boo
     try:
         # Publish the create client command
         result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
+        print(f"Create client result: {result.rc} for command: {command}")
         return result.rc == 0
     except Exception as e:
         print(f"Error creating MQTT user: {str(e)}")
@@ -83,6 +86,8 @@ def create_role(role_name: str, topic: str, client: mqtt.Client) -> bool:
     try:       
         # Publish the create role command
         result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
+        print(f"Create role result: {result.rc} for command: {command}")
+        
         return result.rc == 0
     except Exception as e:
         print(f"Error creating role: {str(e)}")
@@ -109,6 +114,7 @@ def assign_role_to_client(username: str, role_name: str, client: mqtt.Client) ->
     try:
         # Publish the assign role command
         result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
+        print(f"Assign role result: {result.rc} for command: {command}")
         return result.rc == 0
     except Exception as e:
         print(f"Error assigning role: {str(e)}")
@@ -165,9 +171,12 @@ def register_and_enable_user(username: str, password: str):
         topic = f"user/{username}/#"
         
         create_role(role_name, topic, client)
+        time.sleep(0.1)  # Add a small delay to ensure role creation is processed
 
         deleteMqttClient(username, client)
+        time.sleep(0.1)
         create_mqtt_client(username, password, client)
+        time.sleep(0.1)
         
         assign_role_to_client(username, role_name, client)
         
