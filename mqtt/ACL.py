@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
 import time
+from utility.logging import logger, Category
 
 # Load environment variables from .env file
 load_dotenv()
@@ -27,8 +28,9 @@ def deleteMqttClient(username: str, client: mqtt.Client) -> bool:
 
     try:
         # Publish the delete client command
-        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
-        print(f"Delete client result: {result.rc} for command: {command}")
+        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command),2)
+        logger.info(Category.MQTT, "deleteClient", "deleteClient", f"Delete client result: {result.rc} for command: {command}")
+
         return result.rc == 0
     except Exception as e:
         print(f"Error deleting MQTT user: {str(e)}")
@@ -54,8 +56,9 @@ def create_mqtt_client(username: str, password: str, client: mqtt.Client) -> boo
     
     try:
         # Publish the create client command
-        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
-        print(f"Create client result: {result.rc} for command: {command}")
+        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command),2)
+        logger.info(Category.MQTT, "createClient", "createClient", f"Create client result: {result.rc} for command: {command}")
+
         return result.rc == 0
     except Exception as e:
         print(f"Error creating MQTT user: {str(e)}")
@@ -85,8 +88,8 @@ def create_role(role_name: str, topic: str, client: mqtt.Client) -> bool:
     
     try:       
         # Publish the create role command
-        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
-        print(f"Create role result: {result.rc} for command: {command}")
+        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command),2)
+        logger.info(Category.MQTT, "createRole", "createRole", f"Create role result: {result.rc} for command: {command}")
         
         return result.rc == 0
     except Exception as e:
@@ -113,8 +116,9 @@ def assign_role_to_client(username: str, role_name: str, client: mqtt.Client) ->
     
     try:
         # Publish the assign role command
-        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command))
-        print(f"Assign role result: {result.rc} for command: {command}")
+        result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command),2)
+        logger.info(Category.MQTT, "addClientRole", "addClientRole", f"Assign role result: {result.rc} for command: {command}")
+        
         return result.rc == 0
     except Exception as e:
         print(f"Error assigning role: {str(e)}")
@@ -138,7 +142,11 @@ def register_and_enable_device(mac_address: str,username: str, password: str):
 
         #MQTT acl do not send back the response! For the moment is just easier to remove old use and create a new one
         deleteMqttClient(mac_address, client)
+        time.sleep(0.1) 
+
         create_mqtt_client(mac_address, password, client)
+        time.sleep(0.1)
+
         assign_role_to_client(mac_address, role_name, client)
 
         client.disconnect()
@@ -175,10 +183,12 @@ def register_and_enable_user(username: str, password: str):
 
         deleteMqttClient(username, client)
         time.sleep(0.1)
+
         create_mqtt_client(username, password, client)
         time.sleep(0.1)
         
         assign_role_to_client(username, role_name, client)
+        #no sleep here, no need
         
         client.disconnect()
         return True

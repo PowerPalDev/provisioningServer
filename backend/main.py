@@ -180,7 +180,7 @@ def create_access_token(data: dict):
 @app.middleware("http")
 async def log_exceptions_middleware(request: Request, call_next):
     try:
-        logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
+        #logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
         response = await call_next(request)
         return response
     except Exception as e:

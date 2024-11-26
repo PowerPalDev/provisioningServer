@@ -16,6 +16,10 @@ class LogLevel(Enum):
     CRITICAL = 50
 
 class Logger:
+    """
+    Logger class for logging messages with different categories and levels
+    """
+    stackOn = True
     def __init__(self):
         self.logs = []  # You might want to replace this with a proper storage solution
 
@@ -31,9 +35,23 @@ class Logger:
         Internal logging method that handles the actual logging logic
         """
         timestamp = datetime.datetime.now().isoformat()
-        
-        if stack_trace is None:
-            stack_trace = ''.join(traceback.format_stack()[:-1])
+        if self.stackOn:
+            if stack_trace is None:
+                stack_trace = ''.join(traceback.format_stack()[:-1])
+
+            if stack_trace and "starlette/middleware/base.py" in stack_trace:
+                # Find the index where the starlette middleware trace starts
+                start_idx = stack_trace.find('File "/home/roy/Public2/provisioningServer/.venv/lib64/python3.11/site-packages/starlette/middleware/base.py')
+                if start_idx != -1:
+                    # Only keep the trace from this point onwards
+                    stack_trace = stack_trace[start_idx:]
+
+
+        if detail is None:
+            detail = "" # Ensure detail is always a string      
+        if ip_address is None:
+            ip_address = "" # Ensure ip_address is always a string
+
 
         log_entry = {
             'timestamp': timestamp,
@@ -64,7 +82,9 @@ class Logger:
         self._log(LogLevel.DEBUG, category, sub, message, detail, ip_address=ip_address)
 
     def info(self, category: Category, sub: str, message: str, detail: Optional[str] = None, ip_address: Optional[str] = None):
+        self.stackOn = False
         self._log(LogLevel.INFO, category, sub, message, detail, ip_address=ip_address)
+        self.stackOn = True
 
     def warning(self, category: Category, sub: str, message: str, detail: Optional[str] = None, ip_address: Optional[str] = None):
         self._log(LogLevel.WARNING, category, sub, message, detail, ip_address=ip_address)
