@@ -21,7 +21,7 @@ export const useDevice = () => {
             setLoading(false);
         }
     };
-    
+
 
     const handleClosePopUp = () => {
         console.log('PopUp closed');
@@ -49,7 +49,7 @@ export const useDevice = () => {
         try {
             setDevices((prevDevices) => prevDevices.filter((device) => device.id !== deviceId));
             console.log(`Attempting to delete device with ID ${deviceId}...`);
-    
+
             await removeDevice(deviceId);
             console.log(`Device with ID ${deviceId} removed successfully.`);
         } catch (e) {
@@ -57,7 +57,7 @@ export const useDevice = () => {
             await fetchDevices();
         }
     };
-    
+
 
     return { devices, loading, error, handleClosePopUp, fetchDevices, createDevice, deleteDevice };
 

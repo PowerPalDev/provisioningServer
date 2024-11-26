@@ -23,7 +23,7 @@ export const authenticateUser = async (username: string, password: string) => {
 export const createUser = async (username: string, password: string) => {
   try {
     const response = await api.post(
-      environment.user.signup,
+      environment.user.base,
       { username, password },
     );
     return response;
@@ -43,3 +43,13 @@ export const addUserDevice = async (userId: number, newDevice: DeviceClass) => {
     console.error(`Failed to create a new device for user ${userId}:`, error);
   }
 };
+
+export const getAllUsers = async () => {
+  try {
+    const response = await api.get(environment.user.base);
+
+    return response;
+  } catch (error) {
+    console.error(`Failed to retrive users:`, error);
+  }
+}

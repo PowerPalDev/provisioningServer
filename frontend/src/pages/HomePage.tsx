@@ -53,9 +53,9 @@ const HomePage = () => {
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', marginBottom: theme.spacing(2) }}>
             <Typography variant="h6" color="text.primary">Device List</Typography>
             <IconButton color="inherit" onClick={handleOpenDeviceDialog}>
-            <AddIcon />
-            <Typography variant="body2" sx={{ ml: 1 }}>Add Device</Typography>
-          </IconButton>
+              <AddIcon />
+              <Typography variant="body2" sx={{ ml: 1 }}>Add Device</Typography>
+            </IconButton>
           </Box>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2) }}>
             {devices.map((device) => (
@@ -70,6 +70,7 @@ const HomePage = () => {
         </Card>
       </Container>
       <AddDeviceDialog open={openDeviceDialog} handleClose={handleCloseDeviceDialog} />
+
     </ThemeProvider>
   );
 };

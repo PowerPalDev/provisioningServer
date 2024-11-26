@@ -5,7 +5,7 @@ export const url = host_url + port;
 export const environment = {
     production: false,
     user: {
-        signup: '/users',
+        base: '/users',
         login: '/login',
         addDevice: (userId: number): string => `/users/${userId}/devices/`
     },

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
 import { useDevice } from '../../hooks/useDevice';
 import { DeviceClass } from '../../models/Device';
+import { useUser } from '../../hooks/useUser';
 
 interface AddDeviceDialogProps {
     open: boolean;
@@ -10,10 +11,13 @@ interface AddDeviceDialogProps {
 
 export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleClose }) => {
     const { createDevice, fetchDevices } = useDevice();
+    const { users } = useUser();
+
     const [deviceId, setDeviceId] = useState('');
     const [deviceName, setDeviceName] = useState('');
     const [deviceMac, setDeviceMac] = useState('');
     const [ownerId, setOwnerId] = useState('');
+
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -69,17 +73,28 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
                         fullWidth
                         variant="outlined"
                     />
-                    <FormLabel htmlFor="ownerId">Owner ID</FormLabel>
-                    <TextField
-                        margin="dense"
+                    <FormLabel htmlFor="ownerId">Owner</FormLabel>
+                    <Select
                         id="ownerId"
                         name="ownerId"
                         label="Owner"
                         value={ownerId}
                         onChange={(e) => setOwnerId(e.target.value)}
+                        input={<OutlinedInput />}
                         fullWidth
-                        variant="outlined"
-                    />
+                    >
+                        {users.length === 0 ? (
+                            <MenuItem disabled value="">
+                                <em>No user found</em>
+                            </MenuItem>
+                        ) : (
+                            users.map((user) => (
+                                <MenuItem key={user.user_id} value={user.user_id}>
+                                    {user.username}
+                                </MenuItem>
+                            ))
+                        )}
+                    </Select>
                     <DialogActions>
                         <Button onClick={handleClose} color="error">Cancel</Button>
                         <Button type="submit" variant="contained" color="primary">Add device</Button>

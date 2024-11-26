@@ -1,5 +1,7 @@
 import { Typography, IconButton, Box } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteConfirmationDialog } from './Dialogs/ConfirmDelete';
+import { useState } from 'react';
 
 interface DeviceProps {
     ownerId: number;
@@ -7,7 +9,9 @@ interface DeviceProps {
     handleDelete: (deviceId: number) => void
 }
 
-const DeviceCard: React.FC<DeviceProps> = ({ ownerId, deviceId, handleDelete}) => {
+const DeviceCard: React.FC<DeviceProps> = ({ ownerId, deviceId, handleDelete }) => {
+    const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
+
 
     return (
         <Box
@@ -33,9 +37,10 @@ const DeviceCard: React.FC<DeviceProps> = ({ ownerId, deviceId, handleDelete}) =
                     Owner id: {ownerId}
                 </Typography>
             </Box>
-            <IconButton onClick={() => handleDelete(deviceId)} color="error">
-            <DeleteIcon />
+            <IconButton onClick={() => setOpenDeviceDialog(true)} color="error">
+                <DeleteIcon />
             </IconButton>
+            <DeleteConfirmationDialog open={openDeviceDialog} handleClose={() => setOpenDeviceDialog(false)} handleDelete={() => handleDelete(deviceId)} />
         </Box>
     );
 };
