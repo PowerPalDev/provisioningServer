@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
 import { Typography, IconButton, Box } from '@mui/material';
-import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DeleteConfirmationDialog } from './Dialogs/ConfirmDelete';
+import { useState } from 'react';
 
 interface DeviceProps {
-    name: string;
-    owner: string;
+    ownerId: number;
+    deviceId: number,
+    handleDelete: (deviceId: number) => void
 }
 
-const Device: React.FC<DeviceProps> = ({ name, owner }) => {
-    const [isOn, setIsOn] = useState(false);
+const DeviceCard: React.FC<DeviceProps> = ({ ownerId, deviceId, handleDelete }) => {
+    const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
 
-    const handleToggle = () => {
-        setIsOn(prevState => !prevState);
-    };
 
     return (
         <Box
@@ -33,21 +32,17 @@ const Device: React.FC<DeviceProps> = ({ name, owner }) => {
             }}
         >
             <Box>
-                <Typography variant="h6">{name}</Typography>
+                <Typography variant="h6">Device id: {deviceId}</Typography>
                 <Typography variant="subtitle1" color="textSecondary">
-                    Owner: {owner}
+                    Owner id: {ownerId}
                 </Typography>
             </Box>
-            <IconButton onClick={handleToggle} color="inherit">
-                <PowerSettingsNewIcon
-                    style={{
-                        color: isOn ? 'blue' : 'gray',
-                        fontSize: 32,
-                    }}
-                />
+            <IconButton onClick={() => setOpenDeviceDialog(true)} color="error">
+                <DeleteIcon />
             </IconButton>
+            <DeleteConfirmationDialog open={openDeviceDialog} handleClose={() => setOpenDeviceDialog(false)} handleDelete={() => handleDelete(deviceId)} />
         </Box>
     );
 };
 
-export default Device;
+export default DeviceCard;

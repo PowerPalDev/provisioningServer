@@ -8,14 +8,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import OutlinedInput from '@mui/material/OutlinedInput';
 
 interface ForgotPasswordProps {
-  open: boolean; // Prop to control dialog visibility
-  onClose: () => void; // Callback to close the dialog from the parent
+  open: boolean;
+  onClose: () => void;
 }
 
 export default function ForgotPassword({ open, onClose }: ForgotPasswordProps) {
   const [isOpen, setIsOpen] = useState(open);
 
-  // Sync local state with the prop
   useEffect(() => {
     setIsOpen(open);
   }, [open]);
@@ -27,13 +26,13 @@ export default function ForgotPassword({ open, onClose }: ForgotPasswordProps) {
 
   return (
     <Dialog
-      open={isOpen} // Use local state to control the dialog
+      open={isOpen}
       onClose={handleClose}
       PaperProps={{
         component: 'form',
         onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
           event.preventDefault();
-          handleClose(); // Close dialog on submit
+          handleClose();
         },
         sx: { backgroundImage: 'none' },
       }}

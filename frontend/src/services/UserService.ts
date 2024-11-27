@@ -1,30 +1,55 @@
-import axios from 'axios';
-import { environment, url } from '../enviroment';
-import { User } from '../models/User';
+import api from "./api/axiosInstance";
+import { environment } from "../enviroment";
+import { DeviceClass } from "../models/Device";
 
-const api = axios.create({
-  baseURL: url,
-});
 
 export const authenticateUser = async (username: string, password: string) => {
   try {
-    const response = await api.post(environment.user.auth, { username, password });
-    // const { token } = response.data;
-    // localStorage.setItem('authToken', token); //TODO: impement token authentication
-    return response.data;
+    const response = await api.post(
+      `${environment.user.login}?username=${username}&password=${password}`
+    );
+    const authToken = response.data.access_token;
+    localStorage.setItem("authToken", authToken);
+
+    if (authToken) {
+
+    }
+    return response;
   } catch (error) {
-    console.error('Authentication failed:', error);
-    throw new Error('Authentication failed. Please try again.');
+    console.error(`Authentication failed: ${error}`);
   }
 };
 
-export const createUser = async (user: User) => {
+export const createUser = async (username: string, password: string) => {
   try {
-    //TODO: validate user
-    const response = await api.post(environment.user.signup, user);
-    return response.data
+    const response = await api.post(
+      environment.user.base,
+      { username, password },
+    );
+    return response;
   } catch (error) {
-    console.error('Registration failed: ', error);
-    throw new Error('Registration failed, please try again');
+    console.error('Registration failed:', error);
+  }
+};
+
+export const addUserDevice = async (userId: number, newDevice: DeviceClass) => {
+  try {
+    const response = await api.post(
+      environment.user.addDevice(userId),
+      newDevice
+    );
+    return response;
+  } catch (error) {
+    console.error(`Failed to create a new device for user ${userId}:`, error);
+  }
+};
+
+export const getAllUsers = async () => {
+  try {
+    const response = await api.get(environment.user.base);
+
+    return response;
+  } catch (error) {
+    console.error(`Failed to retrive users:`, error);
   }
 }

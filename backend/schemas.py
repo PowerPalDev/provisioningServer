@@ -5,7 +5,7 @@ from datetime import datetime, date, time
 # Device Schemas
 class DeviceBase(BaseModel):
     name: str
-    type: str
+    type: Optional[str] = None
     serial_number: Optional[str] = None
     status: Optional[int] = None
     firmware_version: Optional[str] = None
@@ -29,7 +29,7 @@ class Device(DeviceBase):
     user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # User Schemas
 class UserBase(BaseModel):
@@ -45,3 +45,4 @@ class User(UserBase):
 
     class Config:
         orm_mode = True
+        from_attributes = True

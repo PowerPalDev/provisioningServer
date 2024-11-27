@@ -33,7 +33,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn() {
   const [open, setOpen] = useState(false);
   
-  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSubmit } = useSignInForm();
+  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn } = useSignInForm();
   
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
@@ -50,9 +50,9 @@ export default function SignIn() {
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault();
     const data = new FormData(e.currentTarget);
-    handleSubmit(data.get('email') as string, data.get('password') as string);
+    handleSignIn(data.get('email') as string, data.get('password') as string);
   };
 
   return (
@@ -117,7 +117,6 @@ export default function SignIn() {
               }}
             />
           </FormControl>
-          {/* Align checkbox and link on the same line */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -138,19 +137,9 @@ export default function SignIn() {
           >
             Sign in
           </Button>
-          <Typography sx={{ textAlign: 'center' }}>
-            Don&apos;t have an account?{' '}
-            <Link
-              href="/signup"
-              variant="body2"
-              sx={{ alignSelf: 'center' }}
-            >
-              Sign up
-            </Link>
-          </Typography>
         </Box>
       </Card>
       <ForgotPassword open={open} onClose={handleCloseForgotPassword} />
-    </SignInContainer>
+      </SignInContainer>
   );
 }
