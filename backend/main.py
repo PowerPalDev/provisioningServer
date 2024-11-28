@@ -170,12 +170,12 @@ def get_devices(db: Session = Depends(get_db),
     #no idea if is possible to do in auto
     devices = [
         {
-            "id": row[0],
-            "mac_address": row[1],
-            "name": row[2],
-            "created_at": row[3].isoformat() if row[3] else None,  # Convert datetime to string
-            "notes": row[4],
-            "user_name": row[5]
+            "id": row.id,
+            "mac_address": row.mac_address,
+            "name": row.name,
+            "created_at": row.created_at.isoformat() if row.created_at else None,  # Convert datetime to string
+            "notes": row.notes,
+            "user_name": row.username
         }
         for row in result
     ]
