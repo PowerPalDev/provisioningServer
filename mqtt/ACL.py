@@ -89,7 +89,7 @@ def create_role(role_name: str, topic: str, client: mqtt.Client) -> bool:
     try:       
         # Publish the create role command
         result = client.publish('$CONTROL/dynamic-security/v1', json.dumps(command),2)
-        logger.info(Category.MQTT, "createRole", "createRole", f"Create role result: {result.rc} for command: {command}")
+        logger.info(Category.MQTT, "createRole", "createRole", f"Create role result: {result.rc} for command: {command}",)
         
         return result.rc == 0
     except Exception as e:

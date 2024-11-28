@@ -4,16 +4,19 @@ from fastapi.openapi.utils import get_openapi
 from dotenv import load_dotenv
 from backend import models, schemas, database
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from backend.database import get_db
 from typing import List
 from datetime import datetime, timedelta
+from fastapi.responses import JSONResponse
 import hashlib
 import jwt
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from backend.deviceOperation.provisioning import router as device_router
 from utility.logging import logger, Category
-
+from utility.context import context
+from typing_extensions import TypedDict, Optional
 
 load_dotenv()
 security = HTTPBearer()
@@ -139,11 +142,43 @@ def add_device(user_id: int,
     
     return new_device
 
+
+class DeviceWithUser(TypedDict):
+    id: int
+    mac_address: str
+    name: str
+    created_at: str
+    notes: Optional[str]
+    user_name: str
+
 # List all devices
-@app.get("/devices/", response_model=List[schemas.Device])
+@app.get("/devices", response_model=List[DeviceWithUser])
 def get_devices(db: Session = Depends(get_db),
                 token: dict = Depends(verify_token)):
-    return db.query(models.Device).all()
+    query = text("""
+    SELECT d.id,
+           d.mac_address,
+           d.name,
+           d.created_at,
+           d.notes,
+           u.username
+    FROM devices as d
+    JOIN users as u ON d.user_id = u.user_id
+""")
+    result = db.execute(query).fetchall()
+    #no idea if is possible to do in auto
+    devices = [
+        {
+            "id": row[0],
+            "mac_address": row[1],
+            "name": row[2],
+            "created_at": row[3].isoformat() if row[3] else None,  # Convert datetime to string
+            "notes": row[4],
+            "user_name": row[5]
+        }
+        for row in result
+    ]
+    return JSONResponse(content=devices)
 
 # Remove a device
 @app.delete("/devices/{device_id}")
@@ -181,10 +216,12 @@ def create_access_token(data: dict):
 async def log_exceptions_middleware(request: Request, call_next):
     try:
         #logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
+        context.userIp.set(request.client.host)
+        userIp = context.userIp.get()
         response = await call_next(request)
         return response
     except Exception as e:
         # Log the exception with the endpoint path
-        print("Unhandled exception occurred at endpoint %s: %s", request.url.path, e, exc_info=True)
+        print("Unhandled exception occurred at endpoint %s: %s", request.url.path, e)
         # Re-raise the exception so FastAPI can handle it appropriately
         raise e
