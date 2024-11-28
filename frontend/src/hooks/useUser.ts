@@ -11,7 +11,6 @@ export const useUser = () => {
 
             if (response && response.data) {
                 setUsers(response.data);
-                console.log(users)
             } else {
                 console.error("Failed to retrieve users");
             }

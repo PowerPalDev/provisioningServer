@@ -45,15 +45,8 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
           <div className="modal-footer">
             <button
               type="button"
-              className="btn btn-secondary"
-              onClick={handleClose}
-            >
-              Cancel
-            </button>
-            <button
-              type="button"
               className="btn btn-danger"
-              onClick={handleDelete}
+              onClick={() => {handleDelete(), handleClose()}}
             >
               Delete
             </button>

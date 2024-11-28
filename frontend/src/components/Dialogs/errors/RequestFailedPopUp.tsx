@@ -1,5 +1,4 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 
 interface RequestFailedProps {
   open: boolean;
@@ -8,18 +7,32 @@ interface RequestFailedProps {
 }
 
 const RequestFailedPopUp: React.FC<RequestFailedProps> = ({ open, onClose, errorText }) => {
+  if (!open) return null;
+
   return (
-    <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Oops! Something went wrong</DialogTitle>
-      <DialogContent>
-        <Typography>{errorText}</Typography>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} color="primary">
-          CLOSE
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <div
+      className="modal fade show"
+      tabIndex={-1}
+      style={{ display: 'block' }}
+      aria-hidden="true"
+    >
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <div className="modal-header">
+            <h5 className="modal-title">Request Failed</h5>
+            <button
+              type="button"
+              className="btn-close"
+              onClick={onClose}
+              aria-label="Close"
+            ></button>
+          </div>
+          <div className="modal-body">
+            <p>{errorText}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

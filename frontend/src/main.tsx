@@ -9,6 +9,7 @@ import SignInCard from './pages/SignIn/SignInPage.tsx';
 import { isAuthenticated } from './utils/authHelper.ts';
 import { initializeErrorHandling } from './services/api/interceptors.ts';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import RequestFailedPopUp from './components/Dialogs/errors/RequestFailedPopUp.tsx';
 
 interface TitleProps {
   title: string;
@@ -47,65 +48,33 @@ const Main = () => {
     initializeErrorHandling(() => setIsErrorPopupOpen(true), setErrorText);
   }, []);
 
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: (
-        <AuthGuard isAuthenticated={isAuthenticated}>
-          <Title title="Home Page">
-            <HomePage />
+  const router = createBrowserRouter(
+    [
+      {
+        path: '/',
+        element: (
+          <AuthGuard isAuthenticated={isAuthenticated}>
+            <Title title="Home Page">
+              <HomePage />
+            </Title>
+          </AuthGuard>
+        ),
+        errorElement: <PageNotFound />,
+      },
+      {
+        path: '/signin',
+        element: (
+          <Title title="Sign In">
+            <SignInCard />
           </Title>
-        </AuthGuard>
-      ),
-      errorElement: <PageNotFound />,
-    },
-    {
-      path: '/signin',
-      element: (
-        <Title title="Sign In">
-          <SignInCard />
-        </Title>
-      ),
-    },
-  ]);
+        ),
+      },
+    ]);
 
   return (
     <>
       <RouterProvider router={router} />
-      {isErrorPopupOpen && (
-        <div
-          className="modal fade show"
-          tabIndex={-1}
-          style={{ display: 'block' }}
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Request Failed</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={handleCloseErrorPopup}
-                  aria-label="Close"
-                ></button>
-              </div>
-              <div className="modal-body">
-                <p>{errorText}</p>
-              </div>
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleCloseErrorPopup}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <RequestFailedPopUp errorText={errorText} onClose={handleCloseErrorPopup} open={isErrorPopupOpen}/>
     </>
   );
 };

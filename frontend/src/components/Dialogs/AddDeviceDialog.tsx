@@ -12,22 +12,21 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
     const { createDevice, fetchDevices } = useDevice();
     const { users } = useUser();
 
-    const [deviceId, setDeviceId] = useState('');
     const [deviceName, setDeviceName] = useState('');
     const [deviceMac, setDeviceMac] = useState('');
     const [ownerId, setOwnerId] = useState('');
+    const [username, setUsername] = useState('');
+    const [notes, setNotes] = useState('');
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const newDevice = new DeviceClass(
-            parseInt(deviceId, 10),
             deviceMac,
             deviceName,
-            parseInt(ownerId, 10)
+            notes,
+            username
         );
-
-        console.log(`Device form submitted for device with id: ${newDevice.serial_number}`);
 
         createDevice(newDevice, parseInt(ownerId, 10), () => {
             fetchDevices();
@@ -57,18 +56,6 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
                         </div>
                         <div className="modal-body">
                             <div className="mb-3">
-                                <label htmlFor="deviceId" className="form-label">Device ID</label>
-                                <input
-                                    type="text"
-                                    id="deviceId"
-                                    name="deviceId"
-                                    value={deviceId}
-                                    onChange={(e) => setDeviceId(e.target.value)}
-                                    className="form-control"
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
                                 <label htmlFor="deviceName" className="form-label">Device Name</label>
                                 <input
                                     type="text"
@@ -93,15 +80,34 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
                                 />
                             </div>
                             <div className="mb-3">
-                                <label htmlFor="ownerId" className="form-label">Owner</label>
+                                <label htmlFor="deviceMac" className="form-label">Notes</label>
+                                <input
+                                    type="text"
+                                    id="notes"
+                                    name="notes"
+                                    value={notes}
+                                    onChange={(e) => setNotes(e.target.value)}
+                                    className="form-control"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="username" className="form-label">Owner</label>
                                 <select
-                                    id="ownerId"
-                                    name="ownerId"
-                                    value={ownerId}
-                                    onChange={(e) => setOwnerId(e.target.value)}
+                                    id="username"
+                                    name="username"
+                                    value={username}
+                                    onChange={(e) => {
+                                        setOwnerId(e.target.value);
+                                        setUsername(e.target.value);
+                                    }
+                                    }
                                     className="form-select"
                                     required
                                 >
+                                    <option value="" disabled>
+                                        Select User
+                                    </option>
                                     {users.length === 0 ? (
                                         <option disabled value="">
                                             No user found

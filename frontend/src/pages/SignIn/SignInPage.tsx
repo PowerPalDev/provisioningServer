@@ -44,7 +44,6 @@ export default function SignIn() {
           Sign in
         </h1>
         <form onSubmit={handleFormSubmit} noValidate>
-          {/* Email Field */}
           <div className="mb-3">
             <label htmlFor="email" className="form-label">
               Email
@@ -62,7 +61,6 @@ export default function SignIn() {
             {emailError && <div className="invalid-feedback">{emailErrorMessage}</div>}
           </div>
 
-          {/* Password Field */}
           <div className="mb-3">
             <label htmlFor="password" className="form-label">
               Password
@@ -89,7 +87,6 @@ export default function SignIn() {
             {passwordError && <div className="invalid-feedback">{passwordErrorMessage}</div>}
           </div>
 
-          {/* Remember Me and Forgot Password */}
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div className="form-check">
               <input
@@ -107,14 +104,12 @@ export default function SignIn() {
             </a>
           </div>
 
-          {/* Sign In Button */}
           <button type="submit" className="btn btn-primary w-100">
             Sign in
           </button>
         </form>
       </div>
 
-      {/* Forgot Password Dialog */}
       {open && <ForgotPassword open={open} onClose={handleCloseForgotPassword} />}
     </div>
   );

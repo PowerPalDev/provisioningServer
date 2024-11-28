@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
 import '../app_theme.scss';
 import { useDevice } from '../hooks/useDevice';
-import DeviceCard from '../components/DeviceCard';
 import Navbar from '../components/NavBar';
 import { AddDeviceDialog } from '../components/Dialogs/AddDeviceDialog';
 import DataTable from 'react-data-table-component';
 import { Device } from '../models/Device';
+import { DeleteConfirmationDialog } from '../components/Dialogs/ConfirmDelete';
 
 const HomePage = () => {
   const { devices, loading, fetchDevices, deleteDevice } = useDevice();
   const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
+  const [openDeleteConfirmationDialog, setOpenDeleteConfirmationDialog] = useState(false);
+  const [deleteDeviceId, setDeleteDeviceId] = useState<number>(0);
   const [filteredDevices, setFilteredDevices] = useState<Device[]>(devices);
-  const [selectedUserId, setSelectedUserId] = useState<number | string>(''); // Stato per il filtro user_id
+  const [selectedUserId, setSelectedUserId] = useState<number | string>('');
+
 
   useEffect(() => {
     fetchDevices();
@@ -34,31 +37,33 @@ const HomePage = () => {
     {
       name: 'Mac address',
       selector: (row: Device) => row.mac_address
+    }, {
+      name: 'Notes',
+      selector: (row: Device) => row.notes || "No notes available"
     },
     {
       name: 'Owner',
-      selector: (row: Device) => row.user_id,
+      selector: (row: Device) => row.user_name,
       sortable: true
-    },    
+    },
     {
       name: 'Azione',
       cell: (row: Device) => (
         <button
-        onClick={() => onDelete(row.id)}
-        className="btn btn-link text-danger"
-        title="Elimina"
-      >
-        <i className="bi bi-trash"></i>
-      </button>
+          onClick={() => onDelete(row.id)}
+          className="btn btn-link text-danger"
+          title="Elimina"
+        >
+          <i className="bi bi-trash"></i>
+        </button>
       ),
       ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
     },
   ];
 
   const onDelete = (deviceId: number) => {
-    deleteDevice(deviceId);
+    setDeleteDeviceId(deviceId);
+    setOpenDeleteConfirmationDialog(true);
   };
 
   const handleOpenDeviceDialog = () => setOpenDeviceDialog(true);
@@ -73,7 +78,7 @@ const HomePage = () => {
     if (userId === '') {
       setFilteredDevices(devices);
     } else {
-      const filtered = devices.filter((device) => device.user_id.toString() === userId);
+      const filtered = devices.filter((device) => device.user_name === userId);
       setFilteredDevices(filtered);
     }
   };
@@ -95,30 +100,35 @@ const HomePage = () => {
             </button>
           </div>
 
-          <div className="mb-3">
-            <label htmlFor="userFilter" className="form-label">Filter by User</label>
-            <select
-              id="userFilter"
-              className="form-select"
-              value={selectedUserId}
-              onChange={handleFilterChange}
-            >
-              <option value="">All Users</option>
-              {devices
-                .map((device) => device.user_id)
-                .filter((value, index, self) => self.indexOf(value) === index)
-                .map((userId) => (
-                  <option key={userId} value={userId}>
-                    {userId}
-                  </option>
-                ))}
-            </select>
-          </div>
+            <div className="mb-3">
+              <label htmlFor="userFilter" className="form-label">Filter by User</label>
+              <select
+                id="userFilter"
+                className="form-select"
+                value={selectedUserId}
+                onChange={handleFilterChange}
+              >
+                <option value="">All Users</option>
+                {devices
+                  .map((device) => device.user_name)
+                  .filter((value, index, self) => self.indexOf(value) === index)
+                  .map((userId) => (
+                    <option key={userId} value={userId}>
+                      {userId}
+                    </option>
+                  ))}
+              </select>
+            </div>
 
-          <DataTable columns={columns} data={filteredDevices} />
+          <DataTable columns={columns} data={filteredDevices} pagination />
         </div>
       </div>
       <AddDeviceDialog open={openDeviceDialog} handleClose={handleCloseDeviceDialog} />
+      <DeleteConfirmationDialog
+        open={openDeleteConfirmationDialog}
+        handleClose={() => setOpenDeleteConfirmationDialog(false)}
+        handleDelete={() => deleteDevice(deleteDeviceId)}
+      />
     </>
   );
 };

@@ -30,6 +30,7 @@ export const useDevice = () => {
 
     const createDevice = async (newDevice: DeviceClass, userId: number, handleClose: () => void) => {
         try {
+            console.log(`Creating new device: ${newDevice}`)
             const response = await addUserDevice(userId, newDevice);
 
             if (response && response.data) {
