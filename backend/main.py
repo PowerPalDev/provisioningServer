@@ -75,6 +75,7 @@ app.add_middleware(
 async def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        context.userId.set(payload["sub"])
         return payload
     except jwt.ExpiredSignatureError:
         raise HTTPException(
@@ -201,7 +202,7 @@ def login(username: str,
     if not user or user.password != password or not user.active:  # In production, use proper password hashing
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    token = create_access_token({"sub": username})
+    token = create_access_token({"sub": user.admin_id})
     return {"access_token": token, "token_type": "bearer"}
 
 def create_access_token(data: dict):
@@ -217,6 +218,8 @@ async def log_exceptions_middleware(request: Request, call_next):
     try:
         #logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
         context.userIp.set(request.client.host)
+        context.requestId.set(context.requestId.get() + 1)
+        context.saveRequestId()
         userIp = context.userIp.get()
         response = await call_next(request)
         return response
