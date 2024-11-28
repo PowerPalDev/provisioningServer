@@ -36,3 +36,6 @@ Thumbs.db
 
 # log
 log/*
+
+#Request counter
+request.dat
