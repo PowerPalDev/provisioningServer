@@ -29,7 +29,7 @@ def generateDevicePassword():
     time_str = current_time.strftime("%Y%m%d%H%M%S%f") + random_stuff
     return hashlib.sha256(time_str.encode()).hexdigest()[:24]
 
-def createDevice(deviceMac, customerName, deviceName,  db):
+def createDevice(device, customerName,  db):
     
     current_time = datetime.utcnow()
     
@@ -40,17 +40,29 @@ def createDevice(deviceMac, customerName, deviceName,  db):
     devicePassword = generateDevicePassword()
 
     new_device = models.Device(
-        name=deviceName,
-        mac_address=deviceMac,
+        name=device.name,
+        mac_address=device.mac_address,
         created_at=current_time,
         devicePassword=devicePassword,
-        user_id=user.user_id
+        user_id=user.user_id,
+        notes=device.notes,
+        type=device.type,
+        serial_number=device.serial_number,
+        firmware_version=device.firmware_version,
+        registration_date=device.registration_date,
+        last_seen=device.last_seen,
+        ip_address=device.ip_address,
+        prov_key=device.prov_key,
+        config=device.config,
+        isonline=device.isonline,
+        encryption_key=device.encryption_key,
+        auth_token=device.auth_token,
     )
 
     db.add(new_device)
 
     from mqtt.ACL import register_and_enable_device
-    register_and_enable_device(deviceMac, customerName, devicePassword)
+    register_and_enable_device(new_device.mac_address, customerName, devicePassword)
 
     db.commit()
     db.refresh(new_device)
@@ -111,7 +123,7 @@ async def autoProvisioning(data: dict, db: Session = Depends(get_db)):
 
         if not device:
             # Check if DEVICE_AUTO_ADD is enabled in the environment
-            device = createDevice(deviceMac, customerName, deviceName, db)
+            device = createDevice(device, customerName, db)
 
         return {"devicePassword": device.devicePassword}
 

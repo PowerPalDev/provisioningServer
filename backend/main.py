@@ -137,7 +137,7 @@ def add_device(user_id: int,
     
     from .deviceOperation.provisioning import createDevice
     device.mac_address = device.mac_address.upper()
-    new_device = createDevice(device.mac_address, db_user.username, device.name, db)
+    new_device = createDevice(device, db_user.username,db)
     if new_device is None:
         raise HTTPException(status_code=500, detail="Failed to create device")
     
