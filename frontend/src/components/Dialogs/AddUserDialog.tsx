@@ -1,29 +1,6 @@
-import Button from '@mui/material/Button';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
-import TextField from '@mui/material/TextField';
-import MuiCard from '@mui/material/Card';
-import { styled } from '@mui/material/styles';
-import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton, InputAdornment } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import { useSignUpForm } from '../../hooks/useSignUp';
-
-
-const Card = styled(MuiCard)(({ theme }) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    alignSelf: 'center',
-    width: '100%',
-    padding: 0,
-    gap: 0,
-    margin: 'auto',
-    boxShadow:
-        'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-    ...theme.applyStyles('dark', {
-        boxShadow:
-            'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-    }),
-}));
 
 interface AddUserDialogProps {
     open: boolean;
@@ -31,14 +8,17 @@ interface AddUserDialogProps {
 }
 
 export const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, handleClose }) => {
-    const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignUp } = useSignUpForm();
-
+    const {
+        emailError,
+        emailErrorMessage,
+        passwordError,
+        passwordErrorMessage,
+        showPassword,
+        setShowPassword,
+        handleSignUp,
+    } = useSignUpForm();
 
     const handleClickShowPassword = () => setShowPassword(!showPassword);
-
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -46,61 +26,83 @@ export const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, handleClose 
         handleSignUp(data.get('email') as string, data.get('password') as string, handleClose);
     };
 
-    return (
-        <Dialog open={open} onClose={handleClose}>
-            <Card variant='outlined'>
-                <DialogTitle>Add New User</DialogTitle>
-                <DialogContent>
-                    <FormControl component="form" onSubmit={handleFormSubmit}>
-                        <FormLabel htmlFor="email">Email</FormLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            id="email"
-                            placeholder="your@email.com"
-                            name="email"
-                            autoComplete="email"
-                            variant="outlined"
-                            error={emailError}
-                            helperText={emailErrorMessage}
-                            color={emailError ? 'error' : 'primary'}
-                        />
+    return open ? (
+        <div className="modal show d-block" tabIndex={-1} role="dialog">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+                <div className="modal-content shadow-sm">
+                    <div className="modal-header">
+                        <h5 className="modal-title">Add New User</h5>
+                        <button
+                            type="button"
+                            className="btn-close"
+                            aria-label="Close"
+                            onClick={handleClose}
+                        ></button>
+                    </div>
+                    <div className="modal-body">
+                        <form onSubmit={handleFormSubmit}>
+                            <div className="mb-3">
+                                <label htmlFor="email" className="form-label">
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    className={`form-control ${emailError ? 'is-invalid' : ''}`}
+                                    id="email"
+                                    name="email"
+                                    placeholder="your@email.com"
+                                    required
+                                    autoComplete="email"
+                                />
+                                {emailError && (
+                                    <div className="invalid-feedback">{emailErrorMessage}</div>
+                                )}
+                            </div>
 
-                        <FormLabel htmlFor="password">Password</FormLabel>
-                        <TextField
-                            required
-                            fullWidth
-                            name="password"
-                            placeholder="••••••"
-                            type={showPassword ? 'text' : 'password'}
-                            id="password"
-                            autoComplete="new-password"
-                            variant="outlined"
-                            error={passwordError}
-                            helperText={passwordErrorMessage}
-                            color={passwordError ? 'error' : 'primary'}
-                            InputProps={{
-                                endAdornment: (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label="toggle password visibility"
-                                            onClick={handleClickShowPassword}
-                                            onMouseDown={handleMouseDownPassword}
-                                            edge="end"
-                                        >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                                        </IconButton>
-                                    </InputAdornment>
-                                ),
-                            }}
-                        />
-                        <DialogActions>
-                            <Button onClick={handleClose} color="error">Cancel</Button>
-                            <Button type='submit' variant="contained" color="primary">Add</Button>
-                        </DialogActions>
-                    </FormControl>
-                </DialogContent>
-            </Card>
-        </Dialog>
-    );
-}
+                            <div className="mb-3">
+                                <label htmlFor="password" className="form-label">
+                                    Password
+                                </label>
+                                <div className="input-group">
+                                    <input
+                                        type={showPassword ? 'text' : 'password'}
+                                        className={`form-control ${
+                                            passwordError ? 'is-invalid' : ''
+                                        }`}
+                                        id="password"
+                                        name="password"
+                                        placeholder="••••••"
+                                        required
+                                        autoComplete="new-password"
+                                    />
+                                    <button
+                                        type="button"
+                                        className="btn btn-outline-secondary"
+                                        onClick={handleClickShowPassword}
+                                    >
+                                        <i
+                                            className={`bi ${
+                                                showPassword ? 'bi-eye-slash' : 'bi-eye'
+                                            }`}
+                                        ></i>
+                                    </button>
+                                    {passwordError && (
+                                        <div className="invalid-feedback">
+                                            {passwordErrorMessage}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="d-flex justify-content-end">
+                                <button type="submit" className="btn btn-primary">
+                                    Add
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    ) : null;
+};

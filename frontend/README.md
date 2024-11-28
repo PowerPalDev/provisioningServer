@@ -18,12 +18,12 @@ A brief description of your project.
     ```
 2. Install dependencies:
     ```bash
-    npm install
+    yarn install
     ```
 ## Getting started
 To start the development server run:
 ```bash
-    npm run dev
+    yarn run dev
 ```
 Then open the [UI](http://localhost:5173/)
 

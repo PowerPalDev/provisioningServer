@@ -6,10 +6,9 @@ import HomePage from './pages/HomePage.tsx';
 import AuthGuard from './guards/AuthGuard.tsx';
 import PageNotFound from './components/Dialogs/errors/PageNotFound.tsx';
 import SignInCard from './pages/SignIn/SignInPage.tsx';
-import { GlobalStyles } from '@mui/material';
 import { isAuthenticated } from './utils/authHelper.ts';
-import RequestFailedPopUp from './components/Dialogs/errors/RequestFailedPopUp.tsx';
 import { initializeErrorHandling } from './services/api/interceptors.ts';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface TitleProps {
   title: string;
@@ -18,26 +17,26 @@ interface TitleProps {
 
 const Title = ({ title, children }: TitleProps) => {
   useEffect(() => {
-    document.title = title + " | PowerPal";
+    document.title = title + ' | PowerPal';
   }, [title]);
 
   return <>{children}</>;
 };
 
-const GlobalStylesComponent = () => (
-  <GlobalStyles
-    styles={{
-      html: { margin: 0, padding: 0, width: '100%', height: '100%' },
-      body: { margin: 0, padding: 0, width: '100%', height: '100%', overflowX: 'hidden' },
-      '*': { boxSizing: 'border-box' },
-    }}
-  />
-);
+const GlobalStylesComponent = () => {
+  useEffect(() => {
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    document.body.style.overflowX = 'hidden';
+  }, []);
+  return null;
+};
 
 const Main = () => {
   const [errorText, setErrorText] = useState('');
   const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
-
 
   const handleCloseErrorPopup = () => {
     setIsErrorPopupOpen(false);
@@ -46,9 +45,7 @@ const Main = () => {
 
   useEffect(() => {
     initializeErrorHandling(() => setIsErrorPopupOpen(true), setErrorText);
-
   }, []);
-
 
   const router = createBrowserRouter([
     {
@@ -75,11 +72,40 @@ const Main = () => {
   return (
     <>
       <RouterProvider router={router} />
-      <RequestFailedPopUp
-        open={isErrorPopupOpen}
-        onClose={handleCloseErrorPopup}
-        errorText={errorText}
-      />
+      {isErrorPopupOpen && (
+        <div
+          className="modal fade show"
+          tabIndex={-1}
+          style={{ display: 'block' }}
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Request Failed</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={handleCloseErrorPopup}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <p>{errorText}</p>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={handleCloseErrorPopup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

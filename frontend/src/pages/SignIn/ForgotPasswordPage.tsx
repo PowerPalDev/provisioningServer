@@ -1,11 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import OutlinedInput from '@mui/material/OutlinedInput';
 
 interface ForgotPasswordProps {
   open: boolean;
@@ -24,45 +17,72 @@ export default function ForgotPassword({ open, onClose }: ForgotPasswordProps) {
     onClose();
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleClose();
+  };
+
   return (
-    <Dialog
-      open={isOpen}
-      onClose={handleClose}
-      PaperProps={{
-        component: 'form',
-        onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-          event.preventDefault();
-          handleClose();
-        },
-        sx: { backgroundImage: 'none' },
-      }}
+    <div
+      className={`modal fade ${isOpen ? 'show' : ''}`}
+      tabIndex={-1}
+      style={{ display: isOpen ? 'block' : 'none' }}
+      aria-labelledby="forgotPasswordModal"
+      aria-hidden={!isOpen}
     >
-      <DialogTitle>Reset password</DialogTitle>
-      <DialogContent
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '80%' }}
-      >
-        <DialogContentText>
-          Enter your account&apos;s email address, and we&apos;ll send you a link to
-          reset your password.
-        </DialogContentText>
-        <OutlinedInput
-          autoFocus
-          required
-          margin="dense"
-          id="email"
-          name="email"
-          label="Email address"
-          placeholder="Email address"
-          type="email"
-          fullWidth
-        />
-      </DialogContent>
-      <DialogActions sx={{ pb: 3, px: 3 }}>
-        <Button onClick={handleClose}>Cancel</Button>
-        <Button variant="contained" type="submit">
-          Continue
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <div className="modal-dialog modal-dialog-centered">
+        <div className="modal-content">
+          <form onSubmit={handleSubmit}>
+            <div className="modal-header">
+              <h5 className="modal-title" id="forgotPasswordModal">
+                Reset password
+              </h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={handleClose}
+                aria-label="Close"
+              ></button>
+            </div>
+            <div className="modal-body">
+              <p>
+                Enter your account&apos;s email address, and we&apos;ll send you a link to
+                reset your password.
+              </p>
+              <div className="mb-3">
+                <label htmlFor="email" className="form-label">
+                  Email address
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="form-control"
+                  placeholder="Email address"
+                  required
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={handleClose}
+              >
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary">
+                Continue
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div
+        className="modal-backdrop fade show"
+        style={{ display: isOpen ? 'block' : 'none' }}
+      ></div>
+    </div>
   );
 }

@@ -1,77 +1,125 @@
 import { useEffect, useState } from 'react';
-import { Box, Container, Typography, ThemeProvider, IconButton } from '@mui/material';
-import { theme } from '../theme';
-import { styled } from '@mui/material/styles';
-import MuiCard from '@mui/material/Card';
+import '../app_theme.scss';
+import { useDevice } from '../hooks/useDevice';
 import DeviceCard from '../components/DeviceCard';
 import Navbar from '../components/NavBar';
-import AddIcon from '@mui/icons-material/Add';
-import { useDevice } from '../hooks/useDevice';
 import { AddDeviceDialog } from '../components/Dialogs/AddDeviceDialog';
-
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  maxWidth: '100%',
-  width: '100%',
-  borderRadius: '12px',
-  gap: theme.spacing(3),
-  padding: theme.spacing(3),
-  boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-}));
+import DataTable from 'react-data-table-component';
+import { Device } from '../models/Device';
 
 const HomePage = () => {
   const { devices, loading, fetchDevices, deleteDevice } = useDevice();
   const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
+  const [filteredDevices, setFilteredDevices] = useState<Device[]>(devices);
+  const [selectedUserId, setSelectedUserId] = useState<number | string>(''); // Stato per il filtro user_id
 
   useEffect(() => {
     fetchDevices();
   }, []);
 
   useEffect(() => {
-    console.log("Devices updated in HomePage:", devices);
+    setFilteredDevices(devices);
   }, [devices]);
+
+  const columns = [
+    {
+      name: 'Device id',
+      selector: (row: Device) => row.id,
+      sortable: true
+    },
+    {
+      name: 'Name',
+      selector: (row: Device) => row.name
+    },
+    {
+      name: 'Mac address',
+      selector: (row: Device) => row.mac_address
+    },
+    {
+      name: 'Owner',
+      selector: (row: Device) => row.user_id,
+      sortable: true
+    },    
+    {
+      name: 'Azione',
+      cell: (row: Device) => (
+        <button
+        onClick={() => onDelete(row.id)}
+        className="btn btn-link text-danger"
+        title="Elimina"
+      >
+        <i className="bi bi-trash"></i>
+      </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+  ];
 
   const onDelete = (deviceId: number) => {
     deleteDevice(deviceId);
   };
 
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
   const handleOpenDeviceDialog = () => setOpenDeviceDialog(true);
   const handleCloseDeviceDialog = () => {
     fetchDevices();
-    setOpenDeviceDialog(false)
+    setOpenDeviceDialog(false);
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Navbar />
-      <Container maxWidth={false} sx={{ padding: 0, paddingTop: '80px' }}>
-        <Card variant="outlined">
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', marginBottom: theme.spacing(2) }}>
-            <Typography variant="h6" color="text.primary">Device List</Typography>
-            <IconButton color="inherit" onClick={handleOpenDeviceDialog}>
-              <AddIcon />
-              <Typography variant="body2" sx={{ ml: 1 }}>Add Device</Typography>
-            </IconButton>
-          </Box>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: theme.spacing(2) }}>
-            {devices.map((device) => (
-              <DeviceCard
-                key={device.id}
-                ownerId={device.user_id}
-                deviceId={device.id}
-                handleDelete={onDelete}
-              />
-            ))}
-          </Box>
-        </Card>
-      </Container>
-      <AddDeviceDialog open={openDeviceDialog} handleClose={handleCloseDeviceDialog} />
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const userId = event.target.value;
+    setSelectedUserId(userId);
+    if (userId === '') {
+      setFilteredDevices(devices);
+    } else {
+      const filtered = devices.filter((device) => device.user_id.toString() === userId);
+      setFilteredDevices(filtered);
+    }
+  };
 
-    </ThemeProvider>
+  if (loading) {
+    return <div className="text-center">Loading...</div>;
+  }
+
+  return (
+    <>
+      <Navbar />
+      <div className="container-fluid mt-5 pt-5">
+        <div className="card p-4 mb-4 shadow-sm">
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <h6 className="mb-0">Device List</h6>
+            <button className="btn btn-primary d-flex align-items-center" onClick={handleOpenDeviceDialog}>
+              <i className="bi bi-plus"></i>
+              <span className="ms-2">Add Device</span>
+            </button>
+          </div>
+
+          <div className="mb-3">
+            <label htmlFor="userFilter" className="form-label">Filter by User</label>
+            <select
+              id="userFilter"
+              className="form-select"
+              value={selectedUserId}
+              onChange={handleFilterChange}
+            >
+              <option value="">All Users</option>
+              {devices
+                .map((device) => device.user_id)
+                .filter((value, index, self) => self.indexOf(value) === index)
+                .map((userId) => (
+                  <option key={userId} value={userId}>
+                    {userId}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <DataTable columns={columns} data={filteredDevices} />
+        </div>
+      </div>
+      <AddDeviceDialog open={openDeviceDialog} handleClose={handleCloseDeviceDialog} />
+    </>
   );
 };
 

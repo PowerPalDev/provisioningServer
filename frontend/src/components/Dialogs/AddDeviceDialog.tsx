@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormLabel, MenuItem, OutlinedInput, Select, TextField } from '@mui/material';
 import { useDevice } from '../../hooks/useDevice';
 import { DeviceClass } from '../../models/Device';
 import { useUser } from '../../hooks/useUser';
@@ -17,7 +16,6 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
     const [deviceName, setDeviceName] = useState('');
     const [deviceMac, setDeviceMac] = useState('');
     const [ownerId, setOwnerId] = useState('');
-
 
     const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -38,69 +36,95 @@ export const AddDeviceDialog: React.FC<AddDeviceDialogProps> = ({ open, handleCl
     };
 
     return (
-        <Dialog open={open}>
-            <DialogTitle>Add New Device</DialogTitle>
-            <DialogContent>
-                <FormControl component="form" onSubmit={handleFormSubmit}>
-                    <FormLabel htmlFor="deviceId">Device ID</FormLabel>
-                    <TextField
-                        autoFocus
-                        margin="dense"
-                        id="deviceId"
-                        name="deviceId"
-                        value={deviceId}
-                        onChange={(e) => setDeviceId(e.target.value)}
-                        fullWidth
-                        variant="outlined"
-                    />
-                    <FormLabel htmlFor="deviceName">Device Name</FormLabel>
-                    <TextField
-                        margin="dense"
-                        id="deviceName"
-                        name="deviceName"
-                        value={deviceName}
-                        onChange={(e) => setDeviceName(e.target.value)}
-                        fullWidth
-                        variant="outlined"
-                    />
-                    <FormLabel htmlFor="deviceMac">Device Mac Address</FormLabel>
-                    <TextField
-                        margin="dense"
-                        id="deviceMac"
-                        name="deviceMac"
-                        value={deviceMac}
-                        onChange={(e) => setDeviceMac(e.target.value)}
-                        fullWidth
-                        variant="outlined"
-                    />
-                    <FormLabel htmlFor="ownerId">Owner</FormLabel>
-                    <Select
-                        id="ownerId"
-                        name="ownerId"
-                        label="Owner"
-                        value={ownerId}
-                        onChange={(e) => setOwnerId(e.target.value)}
-                        input={<OutlinedInput />}
-                        fullWidth
-                    >
-                        {users.length === 0 ? (
-                            <MenuItem disabled value="">
-                                <em>No user found</em>
-                            </MenuItem>
-                        ) : (
-                            users.map((user) => (
-                                <MenuItem key={user.user_id} value={user.user_id}>
-                                    {user.username}
-                                </MenuItem>
-                            ))
-                        )}
-                    </Select>
-                    <DialogActions>
-                        <Button onClick={handleClose} color="error">Cancel</Button>
-                        <Button type="submit" variant="contained" color="primary">Add device</Button>
-                    </DialogActions>
-                </FormControl>
-            </DialogContent>
-        </Dialog>
+        <div
+            className={`modal fade ${open ? 'show' : ''}`}
+            tabIndex={-1}
+            style={{ display: open ? 'block' : 'none' }} // Ensures modal content is rendered when open
+            aria-labelledby="addDeviceModal"
+            aria-hidden={!open}
+        >
+            <div className="modal-dialog modal-dialog-centered">
+                <div className="modal-content">
+                    <form onSubmit={handleFormSubmit}>
+                        <div className="modal-header">
+                            <h5 className="modal-title" id="addDeviceModal">Add New Device</h5>
+                            <button
+                                type="button"
+                                className="btn-close"
+                                onClick={handleClose}
+                                aria-label="Close"
+                            ></button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="mb-3">
+                                <label htmlFor="deviceId" className="form-label">Device ID</label>
+                                <input
+                                    type="text"
+                                    id="deviceId"
+                                    name="deviceId"
+                                    value={deviceId}
+                                    onChange={(e) => setDeviceId(e.target.value)}
+                                    className="form-control"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="deviceName" className="form-label">Device Name</label>
+                                <input
+                                    type="text"
+                                    id="deviceName"
+                                    name="deviceName"
+                                    value={deviceName}
+                                    onChange={(e) => setDeviceName(e.target.value)}
+                                    className="form-control"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="deviceMac" className="form-label">Device Mac Address</label>
+                                <input
+                                    type="text"
+                                    id="deviceMac"
+                                    name="deviceMac"
+                                    value={deviceMac}
+                                    onChange={(e) => setDeviceMac(e.target.value)}
+                                    className="form-control"
+                                    required
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <label htmlFor="ownerId" className="form-label">Owner</label>
+                                <select
+                                    id="ownerId"
+                                    name="ownerId"
+                                    value={ownerId}
+                                    onChange={(e) => setOwnerId(e.target.value)}
+                                    className="form-select"
+                                    required
+                                >
+                                    {users.length === 0 ? (
+                                        <option disabled value="">
+                                            No user found
+                                        </option>
+                                    ) : (
+                                        users.map((user) => (
+                                            <option key={user.user_id} value={user.user_id}>
+                                                {user.username}
+                                            </option>
+                                        ))
+                                    )}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="submit" className="btn btn-primary">
+                                Add Device
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
     );
 };

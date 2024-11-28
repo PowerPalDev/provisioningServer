@@ -1,40 +1,22 @@
 import React, { useState } from 'react';
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, InputAdornment, Link, Stack, TextField, Typography } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import ForgotPassword from './ForgotPasswordPage';
 import { useSignInForm } from '../../hooks/useSignIn';
-import MuiCard from '@mui/material/Card';
-
-const Card = styled(MuiCard)(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  alignSelf: 'center',
-  width: '100%',
-  padding: theme.spacing(4),
-  gap: theme.spacing(2),
-  margin: 'auto',
-  [theme.breakpoints.up('sm')]: {
-    maxWidth: '450px',
-  },
-  boxShadow:
-    'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-}));
-
-const SignInContainer = styled(Stack)(({ theme }) => ({
-  height: 'calc((1 - var(--template-frame-height, 0)) * 100dvh)',
-  minHeight: '100%',
-  padding: theme.spacing(2),
-  [theme.breakpoints.up('sm')]: {
-    padding: theme.spacing(4),
-  },
-}));
 
 export default function SignIn() {
   const [open, setOpen] = useState(false);
-  
-  const { emailError, emailErrorMessage, passwordError, passwordErrorMessage, showPassword, setShowPassword, handleSignIn } = useSignInForm();
-  
+
+  const {
+    emailError,
+    emailErrorMessage,
+    passwordError,
+    passwordErrorMessage,
+    showPassword,
+    setShowPassword,
+    handleSignIn,
+  } = useSignInForm();
+
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -56,90 +38,84 @@ export default function SignIn() {
   };
 
   return (
-    <SignInContainer direction="column" justifyContent="space-between">
-      <Card variant="outlined">
-        <Typography component="h1" variant="h4" sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}>
+    <div className="d-flex flex-column justify-content-center align-items-center min-vh-100 p-3">
+      <div className="card shadow-sm p-4 w-100" style={{ maxWidth: '450px' }}>
+        <h1 className="text-center mb-4" style={{ fontSize: '2rem' }}>
           Sign in
-        </Typography>
-        <Box
-          component="form"
-          onSubmit={handleFormSubmit}
-          noValidate
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%',
-            gap: 2,
-          }}
-        >
-          <FormControl>
-            <FormLabel htmlFor="email">Email</FormLabel>
-            <TextField
-              error={emailError}
-              helperText={emailErrorMessage}
-              id="email"
+        </h1>
+        <form onSubmit={handleFormSubmit} noValidate>
+          {/* Email Field */}
+          <div className="mb-3">
+            <label htmlFor="email" className="form-label">
+              Email
+            </label>
+            <input
               type="email"
+              className={`form-control ${emailError ? 'is-invalid' : ''}`}
+              id="email"
               name="email"
               placeholder="your@email.com"
               autoComplete="email"
+              required
               autoFocus
-              required
-              fullWidth
-              variant="outlined"
             />
-          </FormControl>
-          <FormControl>
-            <FormLabel htmlFor="password">Password</FormLabel>
-            <TextField
-              required
-              fullWidth
-              name="password"
-              placeholder="••••••"
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              autoComplete="new-password"
-              variant="outlined"
-              error={passwordError}
-              helperText={passwordErrorMessage}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </FormControl>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Link
-              href="#"
-              variant="body2"
-              onClick={handleOpenForgotPassword} // This will open the dialog
-            >
+            {emailError && <div className="invalid-feedback">{emailErrorMessage}</div>}
+          </div>
+
+          {/* Password Field */}
+          <div className="mb-3">
+            <label htmlFor="password" className="form-label">
+              Password
+            </label>
+            <div className="input-group">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                className={`form-control ${passwordError ? 'is-invalid' : ''}`}
+                id="password"
+                name="password"
+                placeholder="••••••"
+                autoComplete="new-password"
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={handleClickShowPassword}
+                onMouseDown={handleMouseDownPassword}
+              >
+                <i className={`bi ${showPassword ? 'bi-eye-slash' : 'bi-eye'}`}></i>
+              </button>
+            </div>
+            {passwordError && <div className="invalid-feedback">{passwordErrorMessage}</div>}
+          </div>
+
+          {/* Remember Me and Forgot Password */}
+          <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="form-check">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                id="rememberMe"
+                value="remember"
+              />
+              <label className="form-check-label" htmlFor="rememberMe">
+                Remember me
+              </label>
+            </div>
+            <a href="#" className="text-decoration-none" onClick={handleOpenForgotPassword}>
               Forgot password?
-            </Link>
-          </Box>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-          >
+            </a>
+          </div>
+
+          {/* Sign In Button */}
+          <button type="submit" className="btn btn-primary w-100">
             Sign in
-          </Button>
-        </Box>
-      </Card>
-      <ForgotPassword open={open} onClose={handleCloseForgotPassword} />
-      </SignInContainer>
+          </button>
+        </form>
+      </div>
+
+      {/* Forgot Password Dialog */}
+      {open && <ForgotPassword open={open} onClose={handleCloseForgotPassword} />}
+    </div>
   );
 }

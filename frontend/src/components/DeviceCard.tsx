@@ -1,48 +1,41 @@
-import { Typography, IconButton, Box } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useState } from 'react';
 import { DeleteConfirmationDialog } from './Dialogs/ConfirmDelete';
-import { useState } from 'react';
 
 interface DeviceProps {
-    ownerId: number;
-    deviceId: number,
-    handleDelete: (deviceId: number) => void
+  ownerId: number;
+  deviceId: number;
+  handleDelete: (deviceId: number) => void;
 }
 
 const DeviceCard: React.FC<DeviceProps> = ({ ownerId, deviceId, handleDelete }) => {
-    const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
+  const [openDeviceDialog, setOpenDeviceDialog] = useState(false);
 
-
-    return (
-        <Box
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            width="100%"
-            padding=".5em"
-            border="1px solid #ccc"
-            borderRadius="8px"
-            sx={{
-                boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-                transition: 'box-shadow 0.3s ease-in-out',
-                '&:hover': {
-                    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.2)',
-                },
-                flexWrap: 'wrap',
-            }}
-        >
-            <Box>
-                <Typography variant="h6">Device id: {deviceId}</Typography>
-                <Typography variant="subtitle1" color="textSecondary">
-                    Owner id: {ownerId}
-                </Typography>
-            </Box>
-            <IconButton onClick={() => setOpenDeviceDialog(true)} color="error">
-                <DeleteIcon />
-            </IconButton>
-            <DeleteConfirmationDialog open={openDeviceDialog} handleClose={() => setOpenDeviceDialog(false)} handleDelete={() => handleDelete(deviceId)} />
-        </Box>
-    );
+  return (
+    <div
+      className="d-flex align-items-center justify-content-between p-3 border rounded shadow-sm"
+      style={{
+        transition: 'box-shadow 0.3s ease-in-out',
+      }}
+      onMouseOver={(e) => (e.currentTarget.style.boxShadow = '0px 8px 16px rgba(0, 0, 0, 0.2)')}
+      onMouseOut={(e) => (e.currentTarget.style.boxShadow = '0px 4px 12px rgba(0, 0, 0, 0.1)')}
+    >
+      <div>
+        <h6 className="mb-1">Device ID: {deviceId}</h6>
+        <p className="text-muted mb-0">Owner ID: {ownerId}</p>
+      </div>
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={() => setOpenDeviceDialog(true)}
+      >
+        <i className="bi bi-trash"></i>
+      </button>
+      <DeleteConfirmationDialog
+        open={openDeviceDialog}
+        handleClose={() => setOpenDeviceDialog(false)}
+        handleDelete={() => handleDelete(deviceId)}
+      />
+    </div>
+  );
 };
 
 export default DeviceCard;

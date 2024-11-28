@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const NotFoundPage: React.FC = () => {
@@ -10,30 +9,19 @@ const NotFoundPage: React.FC = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        textAlign: 'center',
-        padding: 3,
-      }}
+    <div
+      className="d-flex flex-column justify-content-center align-items-center text-center"
+      style={{ height: '100vh', padding: '1rem' }}
     >
-      <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold' }}>
-        404
-      </Typography>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Oops! Page Not Found
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 4 }}>
+      <h1 style={{ fontSize: '6rem', fontWeight: 'bold' }}>404</h1>
+      <h5 className="mb-2">Oops! Page Not Found</h5>
+      <p className="mb-4">
         The page you're looking for doesn't exist. It might have been removed, or you may have typed the wrong URL.
-      </Typography>
-      <Button variant="contained" onClick={handleGoHome}>
+      </p>
+      <button className="btn btn-primary" onClick={handleGoHome}>
         Go to Home
-      </Button>
-    </Box>
+      </button>
+    </div>
   );
 };
 
