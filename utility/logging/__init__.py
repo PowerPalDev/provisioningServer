@@ -2,6 +2,9 @@ from enum import Enum
 import traceback
 import datetime
 from typing import Optional
+import os
+import contextvars
+from utility.context import context
 
 class Category(Enum):
     USER = "USER"
@@ -50,7 +53,7 @@ class Logger:
         if detail is None:
             detail = "" # Ensure detail is always a string      
         if ip_address is None:
-            ip_address = "" # Ensure ip_address is always a string
+            ip_address = context.userIp.get() # Ensure ip_address is always a string
 
 
         log_entry = {
@@ -77,6 +80,34 @@ class Logger:
             print(f"    {detail}")
         if stack_trace:
             print(f"    {stack_trace}")
+
+        self._write_to_file(log_entry)
+
+    def _write_to_file(self, log_entry: dict):
+        """
+        Write log entry to a daily log file
+        """
+        today = datetime.datetime.now().strftime('%Y-%m-%d')
+        log_dir = 'log'
+        
+        # Create log directory if it doesn't exist
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+            
+        log_file = os.path.join(log_dir, f'{today}.log')
+        
+        # Format the log entry
+        ip_info = f" [{log_entry['ip_address']}]" if log_entry['ip_address'] else ""
+        log_line = f"[{log_entry['timestamp']}]{ip_info} {log_entry['level']} - {log_entry['category']}/{log_entry['sub']}: {log_entry['message']}\n"
+        
+        if log_entry['detail']:
+            log_line += f"    {log_entry['detail']}\n"
+        if log_entry['stack_trace']:
+            log_line += f"    {log_entry['stack_trace']}\n"
+            
+        # Append to file
+        with open(log_file, 'a') as f:
+            f.write(log_line)
 
     def debug(self, category: Category, sub: str, message: str, detail: Optional[str] = None, ip_address: Optional[str] = None):
         self._log(LogLevel.DEBUG, category, sub, message, detail, ip_address=ip_address)
