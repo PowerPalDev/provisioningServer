@@ -3,6 +3,7 @@ venv/
 env/
 .venv/
 
+
 # Python specific
 *.pyc
 __pycache__/
