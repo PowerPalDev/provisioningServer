@@ -12,11 +12,32 @@ class Category(Enum):
     DEVICE = "DEVICE"
 
 class LogLevel(Enum):
+    # DEBUG: Used to provide detailed diagnostic information for debugging purposes.
+    # Typically includes information helpful for developers, such as raw data being
+    # processed by a function. This level is usually NOT LOGGED in production as it
+    # can produce excessive output.
     DEBUG = 10
+    
+    # INFO: General information about application execution. This is used for messages
+    # that highlight the progress of the application in a normal, expected way.
     INFO = 20
+    
+    # WARNING: Indicates that something unexpected happened, or indicative of a
+    # potential issue in the near future (e.g., 'disk space low'). The application
+    # can continue running without any immediate action.
     WARNING = 30
+    
+    # ERROR: Represents an error that prevents some part of the application from
+    # functioning properly. These errors are recoverable (e.g., a malformed user
+    # input or retryable timeout).
     ERROR = 40
+    
+    # CRITICAL: Represents a severe issue that causes the application to fail or
+    # requires immediate attention (e.g., inability to connect to a database or
+    # critical service). These are unrecoverable errors.
     CRITICAL = 50
+
+
 
 class Logger:
     """
