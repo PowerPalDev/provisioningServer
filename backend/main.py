@@ -13,7 +13,6 @@ import hashlib
 import jwt
 from fastapi.middleware.cors import CORSMiddleware
 import os
-from backend.deviceOperation.provisioning import router as device_router
 from utility.logging import logger, Category
 from utility.context import context
 from typing_extensions import TypedDict, Optional
@@ -41,7 +40,12 @@ app = FastAPI(
         }
     ]
 )
+
+from backend.deviceOperation.provisioning import router as device_router
 app.include_router(device_router)
+
+from backend.mqtt.mqtt import router as mqtt_router
+app.include_router(mqtt_router)
 
 def custom_openapi():
     if app.openapi_schema:
@@ -218,7 +222,8 @@ async def log_exceptions_middleware(request: Request, call_next):
     try:
         #logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
         context.userIp.set(request.client.host)
-        context.requestId.set(context.requestId.get() + 1)
+        requestId = context.requestId.get() + 1
+        context.requestId.set(requestId)
         context.saveRequestId()
         userIp = context.userIp.get()
         response = await call_next(request)

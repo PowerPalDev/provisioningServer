@@ -10,12 +10,12 @@ from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from backend.database import get_db
 from backend import models, schemas
 import os
 import hashlib
 import random
 import time
+from utility.logging import logger, Category
 
 # Create a router instance
 router = APIRouter(
@@ -70,12 +70,12 @@ def createDevice(device, customerName,  db):
     return new_device
 
 @router.get("/provisioning")
-
 async def provisioning(
     deviceMac: str | None = None, 
     deviceMacHex: str | None = None, 
     db: Session = Depends(get_db)
 ):
+    logger.info(Category.USER, "access", "generic request" ,"detailed information")
     try:
         if deviceMacHex:
             # Convert hex MAC to colon-separated format

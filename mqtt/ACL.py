@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
 import time
 from utility.logging import logger, Category
+from backend.models import User
 
 # Load environment variables from .env file
 load_dotenv()
@@ -155,7 +156,7 @@ def register_and_enable_device(mac_address: str,username: str, password: str):
         print(f"Error registering device: {str(e)}")
         return False
 
-def register_and_enable_user(username: str, password: str):
+def register_and_enable_user(user: User):
     if not MQTT_ENABLED:
         return
 
@@ -175,19 +176,19 @@ def register_and_enable_user(username: str, password: str):
         # Connect to broker
         client.connect(MQTT_ADDRESS, MQTT_PORT)
 
-        role_name = f"{username}_Publish"
-        topic = f"user/{username}/#"
+        role_name = f"{user.username}_Publish"
+        topic = f"user/{user.username}/#"
         
+        deleteMqttClient(user.username, client)
+        time.sleep(0.1)
+
+        create_mqtt_client(user.username, user.password, client)
+        time.sleep(0.1)
+
         create_role(role_name, topic, client)
         time.sleep(0.1)  # Add a small delay to ensure role creation is processed
 
-        deleteMqttClient(username, client)
-        time.sleep(0.1)
-
-        create_mqtt_client(username, password, client)
-        time.sleep(0.1)
-        
-        assign_role_to_client(username, role_name, client)
+        assign_role_to_client(user.username, role_name, client)
         #no sleep here, no need
         
         client.disconnect()

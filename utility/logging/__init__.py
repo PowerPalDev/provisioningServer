@@ -93,11 +93,25 @@ class Logger:
         if detail is None:
             detail = "" # Ensure detail is always a string      
         if ip_address is None:
-            ip_address = context.userIp.get()
+            try:
+                ip_address = context.userIp.get()
+            except:
+                ip_address = None
+            
+        # Handle requestId
+        try:
+            rid = context.requestId.get()
+            requestId = rid if rid is not None else None
+        except LookupError:
+            requestId = None
 
-        requestId = context.requestId.get()
-        userId = context.userId.get()
-
+        # Handle userId
+        try:
+            uid = context.userId.get()
+            userId = uid if uid is not None else None
+        except LookupError:
+            userId = None
+            
         log_entry = {
             'timestamp': timestamp,
             'level': level.name,
