@@ -96,7 +96,10 @@ async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
         for special_user in special_users:
             if special_user["username"] == request.username:
                 acl =special_user["acl"]
-
+                for acl_pattern in acl:
+                    if mqtt_topic_matches(acl_pattern,request.topic): 
+                        return "ok"
+            
         logger.error(
             Category.MQTT,
             "check_acl",

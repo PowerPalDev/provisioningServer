@@ -112,11 +112,6 @@ def create_user(user: schemas.UserCreate,
     current_time = datetime.utcnow()
     new_user = models.User(username=user.username, password=user.password, created_at=current_time)
 
-    from mqtt.ACL import register_and_enable_user
-
-    if not register_and_enable_user(new_user.username, new_user.password):
-        raise HTTPException(status_code=500, detail="Failed to register and enable MQTT user")
-
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

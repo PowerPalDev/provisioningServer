@@ -61,9 +61,6 @@ def createDevice(device, customerName,  db):
 
     db.add(new_device)
 
-    from mqtt.ACL import register_and_enable_device
-    register_and_enable_device(new_device.mac_address, customerName, devicePassword)
-
     db.commit()
     db.refresh(new_device)
 
@@ -122,6 +119,15 @@ async def autoProvisioning(data: dict, db: Session = Depends(get_db)):
         device = db.query(models.Device).filter(models.Device.mac_address == deviceMac).first()
 
         if not device:
+            device = models.Device()
+            device.mac_address = deviceMac
+            device.name = deviceName
+            device.created_at = datetime.utcnow()
+            device.last_seen = datetime.utcnow()
+            device.isonline = True
+            device.config = {}
+            device.type = "device"
+            device.registration_date = datetime.utcnow()
             # Check if DEVICE_AUTO_ADD is enabled in the environment
             device = createDevice(device, customerName, db)
 
