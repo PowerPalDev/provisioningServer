@@ -75,8 +75,6 @@ class ACLCheckRequest(BaseModel):
 @router.post("/check_acl", response_class=PlainTextResponse)
 async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
     try:
-        print(mqtt_topic_matches("/user/RoyV2/device/#", "/user/RoyV2/device/1"))  # Should return True
-
         logger.info(
             Category.MQTT, 
             "check_user", 
@@ -90,7 +88,7 @@ async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
         result = db.execute(sql, {"username": request.username})
         user = result.fetchone()
         if user:
-            allowed_topics.append(f"/user/{user.username}/device/#")
+            allowed_topics.append(f"/user/{user.username}/#")
             if mqtt_topic_matches(allowed_topics[0],request.topic): 
                 return "ok"
         
