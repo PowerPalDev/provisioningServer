@@ -67,8 +67,8 @@ const Main = () => {
           <Title title="Sign In">
             <SignInCard />
           </Title>
-        ),
-      },
+        )
+      }
     ]);
 
   return (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAllUsers } from "../services/UserService";
+import { getAllUsers } from "../services/UserService.service";
 import { User } from "../models/User";
 
 export const useUser = () => {

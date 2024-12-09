@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { getDevices, removeDevice } from '../services/DeviceService';
+import { getDevices, removeDevice } from '../services/DeviceService.service';
 import { Device, DeviceClass } from '../models/Device';
-import { addUserDevice } from '../services/UserService';
+import { addUserDevice } from '../services/UserService.service';
 
 export const useDevice = () => {
     const [devices, setDevices] = useState<Device[]>([]);

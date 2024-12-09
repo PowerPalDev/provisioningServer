@@ -43,6 +43,7 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
+      {/* TODO add fetch devices */}
       <AddUserDialog open={openUserDialog} handleClose={() => setOpenUserDialog(false)} />
     </>
   );

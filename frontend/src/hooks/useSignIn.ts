@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authenticateUser } from '../services/UserService';
+import { authenticateUser } from '../services/UserService.service';
 
 export const useSignInForm = () => {
   const [emailError, setEmailError] = useState(false);
