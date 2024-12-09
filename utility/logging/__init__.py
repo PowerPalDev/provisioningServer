@@ -93,11 +93,25 @@ class Logger:
         if detail is None:
             detail = "" # Ensure detail is always a string      
         if ip_address is None:
-            ip_address = context.userIp.get()
+            try:
+                ip_address = context.userIp.get()
+            except:
+                ip_address = None
+            
+        # Handle requestId
+        try:
+            rid = context.requestId.get()
+            requestId = rid if rid is not None else None
+        except LookupError:
+            requestId = None
 
-        requestId = context.requestId.get()
-        userId = context.userId.get()
-
+        # Handle userId
+        try:
+            uid = context.userId.get()
+            userId = uid if uid is not None else None
+        except LookupError:
+            userId = None
+            
         log_entry = {
             'timestamp': timestamp,
             'level': level.name,
@@ -119,12 +133,12 @@ class Logger:
         
         # Print to console for debugging
         ip_info = f" [{ip_address}]" if ip_address else ""
-        print(f"[{timestamp}]{ip_info} {requestId} {level.name} - {category.name}/{sub}: {message}")
+        print(f"\n[{timestamp}]{ip_info} {requestId} {level.name} - {category.name}/{sub}: {message}")
         if detail:
             print(f"{detail}")
         if stack_trace:
             print(f"{stack_trace}")
-
+        
         self._write_to_file(log_entry)
 
     def _write_to_file(self, log_entry: dict):

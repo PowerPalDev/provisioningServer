@@ -10,12 +10,12 @@ from datetime import datetime, timedelta
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from backend.database import get_db
 from backend import models, schemas
 import os
 import hashlib
 import random
 import time
+from utility.logging import logger, Category
 
 # Create a router instance
 router = APIRouter(
@@ -61,21 +61,18 @@ def createDevice(device, customerName,  db):
 
     db.add(new_device)
 
-    from mqtt.ACL import register_and_enable_device
-    register_and_enable_device(new_device.mac_address, customerName, devicePassword)
-
     db.commit()
     db.refresh(new_device)
 
     return new_device
 
 @router.get("/provisioning")
-
 async def provisioning(
     deviceMac: str | None = None, 
     deviceMacHex: str | None = None, 
     db: Session = Depends(get_db)
 ):
+    #logger.info(Category.DEVICE, "access", "provisioning request")
     try:
         if deviceMacHex:
             # Convert hex MAC to colon-separated format
@@ -85,6 +82,7 @@ async def provisioning(
         device = db.query(models.Device).filter(models.Device.mac_address == deviceMac).first()
 
         if not device:
+            logger.error(Category.DEVICE, "provisioning request", deviceMac , "device not found")
             raise HTTPException(status_code=404, detail="Device not found")
 
         # Load the user and get the devicePassword
@@ -122,6 +120,15 @@ async def autoProvisioning(data: dict, db: Session = Depends(get_db)):
         device = db.query(models.Device).filter(models.Device.mac_address == deviceMac).first()
 
         if not device:
+            device = models.Device()
+            device.mac_address = deviceMac
+            device.name = deviceName
+            device.created_at = datetime.utcnow()
+            device.last_seen = datetime.utcnow()
+            device.isonline = True
+            device.config = {}
+            device.type = "device"
+            device.registration_date = datetime.utcnow()
             # Check if DEVICE_AUTO_ADD is enabled in the environment
             device = createDevice(device, customerName, db)
 
