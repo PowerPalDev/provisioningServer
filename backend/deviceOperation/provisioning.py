@@ -72,7 +72,7 @@ async def provisioning(
     deviceMacHex: str | None = None, 
     db: Session = Depends(get_db)
 ):
-    logger.info(Category.USER, "access", "generic request" ,"detailed information")
+    #logger.info(Category.DEVICE, "access", "provisioning request")
     try:
         if deviceMacHex:
             # Convert hex MAC to colon-separated format
@@ -82,6 +82,7 @@ async def provisioning(
         device = db.query(models.Device).filter(models.Device.mac_address == deviceMac).first()
 
         if not device:
+            logger.error(Category.DEVICE, "provisioning request", deviceMac , "device not found")
             raise HTTPException(status_code=404, detail="Device not found")
 
         # Load the user and get the devicePassword
