@@ -216,15 +216,64 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+def saveRequestId(requestId,force=False):
+    # Only save to disk when request ID is divisible by 100 to reduce I/O
+    if requestId % 100 != 0 and not force:
+        return
+    """Save the current request ID to disk"""
+    try:
+        with open('request.dat', 'w') as f:
+            f.write(str(requestId))
+    except Exception:
+        # If we can't save, just continue with current value
+        pass
+    
+def loadRequestId() -> int:
+    """Load the last request ID from disk, or return 0 if file doesn't exist"""
+    try:
+        with open('request.dat', 'r') as f:
+            #we bump the value by 100 to avoid duplicating in logs
+            return int(f.read().strip()) + 100
+    except FileNotFoundError:
+        return 0
+    except Exception:
+        return 0
+    
+#how to have in multiprocessing mode a shared variable ?
+# For multiprocessing shared variables, we can use multiprocessing.Value
+from multiprocessing import Value
+import ctypes
+
+# Create a shared counter using multiprocessing.Value
+# 'i' specifies integer type, initial value is 0
+shared_request_id = Value(ctypes.c_int, 0)
+shared_request_id.value = loadRequestId()
+saveRequestId(shared_request_id.value,True)
+
+# Update context.py to use the shared value:
+def get_request_id():
+    #stnadard python does not have atomic operations, so we need to use a lock
+    with shared_request_id.get_lock():
+        return shared_request_id.value
+
+def increment_request_id():
+    #stnadard python does not have atomic operations, so we need to use a lock
+    with shared_request_id.get_lock():
+        shared_request_id.value += 1
+        return shared_request_id.value
+
+
+
+        
 
 @app.middleware("http")
 async def log_exceptions_middleware(request: Request, call_next):
     try:
         #logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
         context.userIp.set(request.client.host)
-        requestId = context.requestId.get() + 1
+        requestId = increment_request_id()
         context.requestId.set(requestId)
-        context.saveRequestId()
+        saveRequestId(requestId)
         userIp = context.userIp.get()
         response = await call_next(request)
         return response

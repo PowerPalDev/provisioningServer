@@ -133,12 +133,12 @@ class Logger:
         
         # Print to console for debugging
         ip_info = f" [{ip_address}]" if ip_address else ""
-        print(f"[{timestamp}]{ip_info} {requestId} {level.name} - {category.name}/{sub}: {message}")
+        print(f"\n[{timestamp}]{ip_info} {requestId} {level.name} - {category.name}/{sub}: {message}")
         if detail:
             print(f"{detail}")
         if stack_trace:
             print(f"{stack_trace}")
-
+        
         self._write_to_file(log_entry)
 
     def _write_to_file(self, log_entry: dict):

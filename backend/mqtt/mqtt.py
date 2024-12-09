@@ -32,7 +32,7 @@ async def check_user(request: CheckUserRequest, db: Session = Depends(get_db)):
         logger.info(
             Category.MQTT, 
             "check_user", 
-            "acl_check",
+            "",
             f"Checking if user {request.username} / {request.password} is allowed to connect to MQTT broker"
         )
 
@@ -54,7 +54,7 @@ async def check_user(request: CheckUserRequest, db: Session = Depends(get_db)):
         logger.error(
             Category.MQTT,
             "check_user",
-            "acl_check", 
+            "", 
             f"User {request.username}:{request.password} is not allowed to connect to MQTT broker"
         )
         
@@ -63,7 +63,7 @@ async def check_user(request: CheckUserRequest, db: Session = Depends(get_db)):
         logger.error(
             Category.MQTT,
             "check_user",
-            "acl_check", 
+            "", 
             f"Error checking ACL: {str(e)}"
         )
         raise HTTPException(status_code=500, detail=str(e))
@@ -77,8 +77,8 @@ async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
     try:
         logger.info(
             Category.MQTT, 
-            "check_user", 
-            "acl_check",
+            "check_acl", 
+            "",
             f"Checking if user {request.username} can operate on {request.topic}"
         )
         allowed_topics = []
@@ -99,8 +99,8 @@ async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
 
         logger.error(
             Category.MQTT,
-            "check_user",
-            "acl_check", 
+            "check_acl",
+            "", 
             f"User {request.username} for topic {request.topic} is not allowed to operate on that topic, allowed topics are {allowed_topics}"
         )
         
@@ -108,8 +108,8 @@ async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(
             Category.MQTT,
-            "check_user",
-            "acl_check", 
+            "check_acl",
+            "", 
             f"Error checking ACL: {str(e)}"
         )
         raise HTTPException(status_code=500, detail=str(e))
