@@ -1,0 +1,41 @@
+
+### 4. * TypeScript components configuration**
+
+TBD
+
+#### `Navbar` example config: TODO
+
+```tsx
+import React from 'react';
+
+interface NavbarProps {
+  isDialogOpen?: boolean;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ isDialogOpen }) => {
+  return (
+    <nav className="navbar navbar-expand-lg navbar-dark bg-primary mb-3">
+      <div className="container-fluid">
+        <a className="navbar-brand" href="/">
+          Device Management
+        </a>
+        <div className="d-flex ms-auto">
+          <button
+            className="btn btn-light d-flex align-items-center me-2"
+            onClick={() => alert('User Dialog Opened')}
+          >
+            <i className="bi bi-person-plus"></i>
+            <span className="ms-2">Add User</span>
+          </button>
+          <button
+            className="btn btn-danger d-flex align-items-center"
+            onClick={() => alert('User Logged Out')}
+          >
+            <i className="bi bi-box-arrow-right"></i>
+            <span className="ms-2">Logout</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+  );
+};
