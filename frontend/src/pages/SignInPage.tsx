@@ -1,11 +1,8 @@
-import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import ForgotPassword from './ForgotPasswordPage';
-import { useSignInForm } from '../../hooks/useSignIn';
+import { useSignInForm } from '../hooks/useSignIn';
 
 export default function SignIn() {
-  const [open, setOpen] = useState(false);
 
   const {
     emailError,
@@ -21,14 +18,6 @@ export default function SignIn() {
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-  };
-
-  const handleOpenForgotPassword = () => {
-    setOpen(true);
-  };
-
-  const handleCloseForgotPassword = () => {
-    setOpen(false);
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -99,9 +88,6 @@ export default function SignIn() {
                 Remember me
               </label>
             </div>
-            <a href="#" className="text-decoration-none" onClick={handleOpenForgotPassword}>
-              Forgot password?
-            </a>
           </div>
 
           <button type="submit" className="btn btn-primary w-100">
@@ -110,7 +96,6 @@ export default function SignIn() {
         </form>
       </div>
 
-      {open && <ForgotPassword open={open} onClose={handleCloseForgotPassword} />}
     </div>
   );
 }

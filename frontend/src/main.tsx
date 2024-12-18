@@ -4,12 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './pages/HomePage.tsx';
 import AuthGuard from './guards/AuthGuard.tsx';
-import PageNotFound from './components/Dialogs/errors/PageNotFound.tsx';
-import SignInCard from './pages/SignIn/SignInPage.tsx';
+import PageNotFound from './components/dialogs/errors/PageNotFound.tsx';
+import SignInCard from './pages/SignInPage.tsx';
 import { isAuthenticated } from './utils/authHelper.ts';
 import { initializeErrorHandling } from './services/api/interceptors.ts';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import RequestFailedPopUp from './components/Dialogs/errors/RequestFailedPopUp.tsx';
+import RequestFailedPopUp from './components/dialogs/errors/RequestFailedPopUp.tsx';
 
 interface TitleProps {
   title: string;

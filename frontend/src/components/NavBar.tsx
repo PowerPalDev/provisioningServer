@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AddUserDialog } from './Dialogs/AddUserDialog';
+import { AddUserDialog } from './dialogs/AddUserDialog';
 import { handleLogout } from '../utils/authHelper';
 
 const Navbar = () => {

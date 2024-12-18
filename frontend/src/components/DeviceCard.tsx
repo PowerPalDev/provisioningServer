@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DeleteConfirmationDialog } from './Dialogs/ConfirmDelete';
+import { DeleteConfirmationDialog } from './dialogs/ConfirmDelete';
 
 interface DeviceProps {
   ownerId: number;

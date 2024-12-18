@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import '../app_theme.scss';
 import { useDevice } from '../hooks/useDevice';
 import Navbar from '../components/NavBar';
-import { AddDeviceDialog } from '../components/Dialogs/AddDeviceDialog';
+import { AddDeviceDialog } from '../components/dialogs/AddDeviceDialog';
 import DataTable from 'react-data-table-component';
 import { Device } from '../models/Device';
-import { DeleteConfirmationDialog } from '../components/Dialogs/ConfirmDelete';
+import { DeleteConfirmationDialog } from '../components/dialogs/ConfirmDelete';
 
 const HomePage = () => {
   const { devices, loading, fetchDevices, deleteDevice } = useDevice();
