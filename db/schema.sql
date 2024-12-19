@@ -2,20 +2,6 @@
 
 \connect "digitalspine";
 
-CREATE SEQUENCE admin_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1;
-
-CREATE TABLE "public"."admin" (
-    "admin_id" integer DEFAULT nextval('admin_id_seq') NOT NULL,
-    "username" character varying NOT NULL,
-    "password" character varying NOT NULL,
-    "active" boolean NOT NULL
-) WITH (oids = false);
-
-COMMENT ON TABLE "public"."admin" IS 'this table is used to manage the user able to login to the panel / use the api';
-
-COMMENT ON COLUMN "public"."admin"."password" IS 'for the moment a sha1 hash, later we might use something better';
-
-
 CREATE SEQUENCE devices_id_seq INCREMENT 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1;
 
 CREATE TABLE "public"."devices" (
@@ -38,6 +24,7 @@ CREATE TABLE "public"."devices" (
     "auth_token" character varying,
     "notes" character varying,
     "created_at" timestamp,
+    "mqtt_stage" character varying,
     CONSTRAINT "devices_pkey" PRIMARY KEY ("id")
 ) WITH (oids = false);
 
@@ -49,6 +36,8 @@ CREATE TABLE "public"."users" (
     "username" character varying,
     "password" character varying,
     "created_at" timestamp,
+    "role" character varying DEFAULT 'user' NOT NULL,
+    "active" boolean DEFAULT true NOT NULL,
     CONSTRAINT "users_pkey" PRIMARY KEY ("user_id"),
     CONSTRAINT "users_username_key" UNIQUE ("username")
 ) WITH (oids = false);
