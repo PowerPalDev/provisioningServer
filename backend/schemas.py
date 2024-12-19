@@ -38,11 +38,14 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     password: str
 
-class User(UserBase):
+class UserList(UserBase):
     user_id: int
     created_at: Optional[datetime] = None
+    active: bool = None
+
+class User(UserList, UserCreate):
     devices: List[Device] = []
+    ip_address: Optional[str] = None
 
     class Config:
-        orm_mode = True
         from_attributes = True

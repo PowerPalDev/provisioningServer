@@ -3,17 +3,10 @@ from sqlalchemy.dialects.postgresql import INET, CHAR
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
+from typing_extensions import TypedDict, Optional
 
 Base = declarative_base()
 
-
-class Admin(Base):
-    __tablename__ = 'admin'
-
-    admin_id = Column(Integer, primary_key=True)
-    username = Column(String, unique=True)
-    password = Column(String)
-    active = Column(Boolean)
 
 class User(Base):
     __tablename__ = 'users'
@@ -22,7 +15,8 @@ class User(Base):
     username = Column(String, unique=True)
     password = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
-
+    role = Column(String)
+    active = Column(Boolean)
     devices = relationship("Device", back_populates="owner")
 
 
@@ -51,3 +45,10 @@ class Device(Base):
 
     owner = relationship("User", back_populates="devices")
 
+class DeviceWithUser(TypedDict):
+    id: int
+    mac_address: str
+    name: str
+    created_at: str
+    notes: Optional[str]
+    username: str

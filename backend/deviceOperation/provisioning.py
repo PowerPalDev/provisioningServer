@@ -51,7 +51,7 @@ def createDevice(device, customerName,  db):
         firmware_version=device.firmware_version,
         registration_date=device.registration_date,
         last_seen=device.last_seen,
-        ip_address=device.ip_address,
+        ip_address="0.0.0.0",
         prov_key=device.prov_key,
         config=device.config,
         isonline=device.isonline,
