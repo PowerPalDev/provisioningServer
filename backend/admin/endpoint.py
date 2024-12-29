@@ -87,7 +87,7 @@ def remove_device(device_id: int, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "Device removed"}
 
-# Add login endpoint
+
 @router.post("/login")
 def login(username: str, password: str, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.username == username).first()

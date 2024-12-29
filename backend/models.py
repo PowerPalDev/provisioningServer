@@ -52,3 +52,10 @@ class DeviceWithUser(TypedDict):
     created_at: str
     notes: Optional[str]
     username: str
+
+class DeviceWithoutUser(TypedDict):
+    id: int
+    mac_address: str
+    name: str
+    created_at: str
+    notes: Optional[str]

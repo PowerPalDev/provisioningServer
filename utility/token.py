@@ -6,6 +6,9 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
 from backend.schemas import User
+from utility.logging import logger, Category
+from fastapi import HTTPException, Security, status  # Added status import
+
 
 load_dotenv()
 
@@ -16,7 +19,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv('ACCESS_TOKEN_EXPIRE_MINUTES'))
 security = HTTPBearer()
 
 # Update token verification function
-async def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)):
+def verify_token(credentials: HTTPAuthorizationCredentials = Security(security)):
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
 
@@ -55,5 +58,14 @@ def verify_is_admin():
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Admin Access Required",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+def verify_is_user():
+    role = context.user.get().role
+    if role != "user": 
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="User Access Required",
             headers={"WWW-Authenticate": "Bearer"},
         )

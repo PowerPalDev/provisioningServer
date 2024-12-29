@@ -15,8 +15,11 @@ import os
 from utility.logging import logger, Category
 from utility.context import context
 from typing_extensions import TypedDict, Optional
-from utility.token import verify_token
+from utility.token import verify_token, verify_is_user,create_access_token
 from backend.models import User 
+import paho.mqtt.client as mqtt
+import multiprocessing
+
 
 app = FastAPI(
     title="Provisioning Server API",
@@ -44,6 +47,9 @@ app.include_router(mqtt_router)
 
 from backend.admin.endpoint import router as admin_router
 app.include_router(admin_router)
+
+from backend.user.endpoint import router as user_router
+app.include_router(user_router)
 
 def custom_openapi():
     if app.openapi_schema:
@@ -80,7 +86,16 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to the Provisioning Server API"}
 
-
+@app.post("/login")
+def login(username: str, password: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.username == username).first()
+    if not user or user.password != password:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    if not user.active:
+        raise HTTPException(status_code=401, detail="User not Active")
+    payload = {"user_id": user.user_id, "user_role": user.role}
+    token = create_access_token(payload)
+    return {"access_token": token, "token_type": "bearer"}
 
 
 
@@ -120,22 +135,21 @@ saveRequestId(shared_request_id.value,True)
 
 # Update context.py to use the shared value:
 def get_request_id():
-    #stnadard python does not have atomic operations, so we need to use a lock
+    #standard python does not have atomic operations, so we need to use a lock
     with shared_request_id.get_lock():
         return shared_request_id.value
 
 def increment_request_id():
-    #stnadard python does not have atomic operations, so we need to use a lock
+    #standard python does not have atomic operations, so we need to use a lock
     with shared_request_id.get_lock():
         shared_request_id.value += 1
         return shared_request_id.value
 
 
 
-        
 
 @app.middleware("http")
-async def log_exceptions_middleware(request: Request, call_next):
+async def middleware(request: Request, call_next):
     try:
         #logger.info(Category.USER, "access", "generic request" ,"detailed information", ip_address=request.client.host)
         user = User()
@@ -144,7 +158,7 @@ async def log_exceptions_middleware(request: Request, call_next):
         requestId = increment_request_id()
         context.requestId.set(requestId)
         saveRequestId(requestId)
-        
+                    
         response = await call_next(request)
         return response
     
