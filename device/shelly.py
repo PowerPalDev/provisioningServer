@@ -11,5 +11,5 @@ class ShellyDevice(Device):
         client = get_mqtt_client()
         topic = f"{self.compose_topic()}/rpc"
         message = f'{{"method":"Switch.Set", "params":{{"id":0,"on":{state}}}}}'
-        client.publish(topic, message)
+        return client.publish(topic, message)
 

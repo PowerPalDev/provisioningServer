@@ -3,8 +3,10 @@ import traceback
 import datetime
 from typing import Optional
 import os
-import contextvars
 from utility.context import context
+from backend.database import get_db
+from backend.models import Log
+from utility.config import conf
 
 class Category(Enum):
     USER = "USER"
@@ -92,9 +94,11 @@ class Logger:
 
         if detail is None:
             detail = "" # Ensure detail is always a string      
+
         if ip_address is None:
             try:
-                ip_address = context.userIp.get()
+                user = context.user.get()
+                ip_address = user.ip_address
             except:
                 ip_address = None
             
@@ -107,8 +111,8 @@ class Logger:
 
         # Handle userId
         try:
-            uid = context.userId.get()
-            userId = uid if uid is not None else None
+            user = context.user.get()
+            userId = user.user_id if user.user_id is not None else None
         except LookupError:
             userId = None
             
@@ -141,6 +145,34 @@ class Logger:
         
         self._write_to_file(log_entry)
 
+        if conf().save_log_db:
+            self.write_to_db(log_entry)
+        
+        
+    def write_to_db(self, log_entry: dict):
+        # Get the database session using next() since get_db() is a generator
+        db = next(get_db())
+        try:
+            time = datetime.datetime.now()
+            log = Log()
+            log.ts = int(time.timestamp())
+            # Get the fractional part of the current time by taking modulo 1
+            log.us = time.timestamp() % 1
+            log.userId = log_entry['userId']
+            log.ip = log_entry['ip_address']
+            log.requestId = log_entry['requestId']
+            log.level = log_entry['level']
+            log.category = log_entry['category']
+            log.subCategory = log_entry['sub']
+            log.message = log_entry['message']
+            log.detail = log_entry['detail']
+            log.stack_trace = log_entry['stack_trace']
+            db.add(log)
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise e
+    
     def _write_to_file(self, log_entry: dict):
         """
         Write log entry to a daily log file

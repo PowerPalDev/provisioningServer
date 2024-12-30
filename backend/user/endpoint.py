@@ -71,6 +71,9 @@ async def toggle_device(state: str, device_id: str, token: dict = Depends(verify
 
     shelly = ShellyDevice()
     shelly.load(device)
-    shelly.toggle(state)
+    if shelly.toggle(state):
+        return JSONResponse(content={"message": "Device toggled"})
+    else:
+        raise HTTPException(status_code=500, detail="Failed to toggle device")
 
     return JSONResponse(content={"message": "Device toggled"})

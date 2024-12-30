@@ -8,8 +8,6 @@ from backend.database import get_db
 from typing import List
 from datetime import datetime, timedelta
 from fastapi.responses import JSONResponse
-import hashlib
-import jwt
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from utility.logging import logger, Category
@@ -18,8 +16,8 @@ from typing_extensions import TypedDict, Optional
 from utility.token import verify_token, verify_is_user,create_access_token
 from backend.models import User 
 import paho.mqtt.client as mqtt
-import multiprocessing
 
+from contextlib import asynccontextmanager
 
 app = FastAPI(
     title="Provisioning Server API",
