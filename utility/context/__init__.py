@@ -1,5 +1,4 @@
 import contextvars
-from backend.schemas import User
 
 #this class is used to store context variables for a request
 class Context:

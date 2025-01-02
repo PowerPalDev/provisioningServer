@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from typing_extensions import TypedDict, Optional
+from sqlalchemy import BigInteger, Text, Float
 
 Base = declarative_base()
 
@@ -52,3 +53,29 @@ class DeviceWithUser(TypedDict):
     created_at: str
     notes: Optional[str]
     username: str
+
+class DeviceWithoutUser(TypedDict):
+    id: int
+    mac_address: str
+    name: str
+    created_at: str
+    notes: Optional[str]
+
+class Log(Base):
+    __tablename__ = 'log'
+    __table_args__ = {'schema': 'log'}  # log are in a different schema
+
+    id = Column(Integer, primary_key=True, server_default="nextval('log_id_seq')")
+    ts = Column(Integer)
+    us = Column(Float)
+    ip = Column(INET)
+    userId = Column(Integer)
+    instanceId = Column(Integer,default=0)
+    requestId = Column(BigInteger)
+    level = Column(String(255))
+    category = Column(String(255))
+    subCategory = Column(String(1024))
+    message = Column(String(4096))
+    detail = Column(Text)
+    stack_trace = Column(Text)
+

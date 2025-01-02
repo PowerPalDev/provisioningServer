@@ -90,7 +90,7 @@ async def provisioning(
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         
-        return {"devicePassword": device.devicePassword, "username": user.username}
+        return {"devicePassword": device.devicePassword, "userId": user.user_id}
 
     except Exception as e:
         print(e)
