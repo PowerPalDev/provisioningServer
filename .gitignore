@@ -37,5 +37,8 @@ Thumbs.db
 # log
 log/*
 
+#temporary stuff
+temp/*
+
 #Request counter
 request.dat

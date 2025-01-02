@@ -59,7 +59,7 @@ class Device(DeviceBase):
         return None
     
     def compose_topic(self):
-        return f"user/{self.user_id}/device/{self.get_short_mac_address()}"
+        return f"/user/{self.user_id}/{self.get_short_mac_address()}"
 
     class Config:
         from_attributes = True

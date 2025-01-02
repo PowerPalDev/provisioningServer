@@ -83,12 +83,11 @@ async def check_acl(request: ACLCheckRequest, db: Session = Depends(get_db)):
         )
         allowed_topics = []
 
-        from sqlalchemy.sql import text
-        sql = text("select u.username from users as u join devices as d on d.user_id = u.user_id where d.mac_address = :username")
-        result = db.execute(sql, {"username": request.username})
-        user = result.fetchone()
-        if user:
-            allowed_topics.append(f"/user/{user.username}/#")
+        
+        #get the user from the database
+        device = db.query(models.Device).filter(models.Device.mac_address == request.username).first()
+        if device:
+            allowed_topics.append(f"/user/{device.user_id}/#")
             if mqtt_topic_matches(allowed_topics[0],request.topic): 
                 return "ok"
         
