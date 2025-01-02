@@ -107,7 +107,7 @@ class Logger:
 
         # Handle userId
         try:
-            uid = context.userId.get()
+            uid = context.user.get().user_id
             userId = uid if uid is not None else None
         except LookupError:
             userId = None

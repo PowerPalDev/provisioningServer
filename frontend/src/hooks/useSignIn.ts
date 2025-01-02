@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authenticateUser } from '../services/UserService.service';
+import { authenticateAdmin } from '../services/UserService.service';
 
 export const useSignInForm = () => {
   const [emailError, setEmailError] = useState(false);
@@ -39,7 +39,7 @@ export const useSignInForm = () => {
 
     if (!validateInputs(email, password)) return;
     try {
-      await authenticateUser(email, password)
+      await authenticateAdmin(email, password)
       navigate('/');
     } catch (e) {
       console.log(e);

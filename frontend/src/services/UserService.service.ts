@@ -3,10 +3,10 @@ import { environment } from "../enviroment";
 import { DeviceClass } from "../models/Device";
 
 
-export const authenticateUser = async (username: string, password: string) => {
+export const authenticateAdmin = async (username: string, password: string) => {
   try {
     const response = await api.post(
-      `${environment.user.login}?username=${username}&password=${password}`
+      `${environment.admin.login()}?username=${username}&password=${password}`
     );
     const authToken = response.data.access_token;
     localStorage.setItem("authToken", authToken);
@@ -23,7 +23,7 @@ export const authenticateUser = async (username: string, password: string) => {
 export const createUser = async (username: string, password: string) => {
   try {
     const response = await api.post(
-      environment.user.base,
+      environment.admin.users(),
       { username, password },
     );
     return response;
@@ -35,7 +35,7 @@ export const createUser = async (username: string, password: string) => {
 export const addUserDevice = async (userId: number, newDevice: DeviceClass) => {
   try {
     const response = await api.post(
-      environment.user.addDevice(userId),
+      environment.admin.addDevice(userId),
       newDevice
     );
     return response;
@@ -46,8 +46,7 @@ export const addUserDevice = async (userId: number, newDevice: DeviceClass) => {
 
 export const getAllUsers = async () => {
   try {
-    const response = await api.get(environment.user.base);
-
+    const response = await api.get(environment.admin.users());
     return response;
   } catch (error) {
     console.error(`Failed to retrive users:`, error);

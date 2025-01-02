@@ -4,14 +4,14 @@ export const url = host_url + port;
 
 export const environment = {
     production: false,
-    user: {
-        base: '/users',
-        login: '/login',
-        addDevice: (userId: number): string => `/users/${userId}/devices/`
+    base: '/v1/admin',
+    admin: {
+        login: (): string =>  `${environment.base}/login`,
+        users: (): string => `${environment.base}/users`,
+        addDevice: (userId: number): string => `${environment.admin.users}/${userId}/devices/`
     },
     device: {
-        base: '/devices',
-        list: (): string => `${environment.device.base}`,
-        remove: (deviceId: number): string => `${environment.device.base}/${deviceId}`
+        list: (): string => `${environment.base}`,
+        remove: (deviceId: number): string => `${environment.base}/${deviceId}`
     }
 };
