@@ -3,9 +3,7 @@ import api from './api/axiosInstance';
 
 export const getDevices = async () => {
     try {
-        const response = await api.get(
-            environment.device.list(),
-        );
+        const response = await api.get(environment.device.list());
         return response;
     } catch (e) {
         throw new Error(`Something went wrong while retriving the device list`);

@@ -8,10 +8,11 @@ export const environment = {
     admin: {
         login: (): string =>  `${environment.base}/login`,
         users: (): string => `${environment.base}/users`,
-        addDevice: (userId: number): string => `${environment.admin.users}/${userId}/devices/`
+        addDevice: (userId: number): string => `${environment.admin.users()}/${userId}/devices`
     },
     device: {
-        list: (): string => `${environment.base}`,
-        remove: (deviceId: number): string => `${environment.base}/${deviceId}`
+        base:():string => `${environment.base}/devices`,
+        list: (): string => `${environment.device.base()}`,
+        remove: (deviceId: number): string => `${environment.device.base()}/${deviceId}`
     }
 };

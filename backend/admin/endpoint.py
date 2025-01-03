@@ -15,9 +15,8 @@ router = APIRouter(
 
 # Dependency check for admin privileges
 def admin_required(token: dict = Depends(verify_token)):
-    if not verify_is_admin(token):
-        raise HTTPException(status_code=403, detail="Administrator privileges  are required")
-
+    verify_is_admin()
+    
 # Register a new user
 @router.post("/users/", response_model=schemas.UserList, dependencies=[Depends(admin_required)])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -35,6 +34,9 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @router.get("/users/", response_model=List[schemas.UserList], dependencies=[Depends(admin_required)])
 def get_users(db: Session = Depends(get_db)):
     MU = models.User
+    # logging.basicConfig()
+    # logging.getLogger().setLevel(logging.DEBUG)
+    # logging.debug("Getting users")
     return db.query(MU).filter(MU.role!="admin").add_columns(MU.user_id, MU.username, MU.active, MU.created_at).all()
 
 # Add a new device
